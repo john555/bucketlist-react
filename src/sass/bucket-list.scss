@@ -1,0 +1,42 @@
+.bucket-container{
+    padding-bottom: 80px;
+}
+.bucket{
+    display: block;
+    position: relative;
+    padding: 12px 20px;
+    box-sizing: border-box;
+    background: #fff;
+    text-decoration: none;
+    color: inherit;
+
+    &:hover, &.active{
+        background: #f6f5f7;
+    }
+}
+
+.bucket + .bucket{
+    margin-top: 0px;
+}
+
+
+.icon-wrapper{
+    float: left;
+    width: 18px;
+    height: 18px;
+    margin-right: 10px;
+}
+
+.bucket-content{
+    float: left;
+    width: calc(100% - 34px)
+}
+
+.bucket-title{
+    font-size: 16px
+}
+
+.bucket-description{
+    width: 90%;
+    font-size: 12px;
+}

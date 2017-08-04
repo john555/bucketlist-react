@@ -1,0 +1,141 @@
+@import "_vars";
+@import "_color";
+
+*{
+    margin: 0; 
+    padding: 0;
+    animation: all .2s;
+}
+
+body{
+    background: $backgroundColor;
+    color: $defaultColor;
+     font-family: "Segoe UI","Segoe WP",Tahoma,Arial,sans-serif;
+}
+
+input, 
+textarea{
+    height: 34px;
+    line-height: 32px;
+    padding: 0 10px;
+    border: 2px solid #ccc;
+    outline: none;
+    font: inherit;
+}
+
+textarea{
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+input:focus, 
+textarea:focus{
+    border-color: #444;
+}
+
+.ellipsable{
+    display: inline-block;
+    max-width: 100%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.clearfix{
+    display: block;
+    clear: both;
+}
+
+#web-container{
+    position: fixed;
+    top:0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 0;
+    overflow: hidden;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+}
+
+#top-bar{
+    position: relative;
+    height: 45px;
+    background: $primaryColorDark;
+    color: $primaryColorDarkForeground;
+}
+
+a#logo{
+    display: inline-block;
+    height: $headerHeight;
+
+    img{
+        display: block;
+        height: 100%;
+    }
+}
+
+#top-bar .container{
+     padding: 0 20px;
+}
+
+#portal-main{
+    display: flex;
+    flex-flow: row nowrap;
+    height: calc(100% - 40px);
+}
+
+#sidebar{
+    background: $primaryColor;
+    display: flex;
+}
+
+main{
+    position: relative;
+    flex: 1 1 auto;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+#dashboard-menu{
+    min-width: 55px;
+}
+
+#sidebar.expanded #dashboard-menu{
+    width: 250px;
+}
+
+#bucket-list{
+    width: 280px;
+    background:white;
+    border-right: 1px solid #f1f2f3
+}
+
+#bucket-list-wrapper{
+    padding: 0px;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+#header-buckets{
+    height: 45px;
+    background: white;
+    padding: 0 20px;
+}
+
+#header-buckets .bucket-title{
+    display: inline-block;
+    line-height: 45px;
+    max-width: 90%;
+    text-rendering: optimizeLegibility;
+    overflow: hidden;
+    font-weight: 400;
+    font-size: 14px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    color: #a2a3a3;
+}
