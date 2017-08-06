@@ -8,9 +8,17 @@
 }
 
 body{
-    background: $backgroundColor;
+    background: $backgroundColor !important;
     color: $defaultColor;
      font-family: "Segoe UI","Segoe WP",Tahoma,Arial,sans-serif;
+}
+
+.left{
+    float: left;
+}
+
+.right{
+    float: right;
 }
 
 input, 
@@ -46,8 +54,27 @@ textarea:focus{
     clear: both;
 }
 
+.btn-primary{
+    background-color: #d83168  !important;
+    border-color: #bf275c !important;
+}
+.btn-primary:hover{
+    background-color: #bf4f4c !important;
+    border-color: #ad4846 !important;
+}
+
+.btn-primary:focus{
+        background-color: #842624 !important;
+    border-color: #4c1716 !important;
+}
+
+.btn-primary:active{
+    background-color: #8c2624 !important;
+    border-color: #6b1d1c !important;
+}
+
 #web-container{
-    position: fixed;
+    position: relative;
     top:0;
     bottom: 0;
     left: 0;
@@ -61,10 +88,12 @@ textarea:focus{
 }
 
 #top-bar{
-    position: relative;
+    position: fixed;
     height: 45px;
     background: $primaryColorDark;
     color: $primaryColorDarkForeground;
+    z-index: 300;
+    width: 100%;
 }
 
 a#logo{
@@ -77,7 +106,7 @@ a#logo{
     }
 }
 
-#top-bar .container{
+.header-container{
      padding: 0 20px;
 }
 
@@ -85,26 +114,59 @@ a#logo{
     display: flex;
     flex-flow: row nowrap;
     height: calc(100% - 40px);
+    padding-top: 45px;
 }
 
 #sidebar{
     background: $primaryColor;
     display: flex;
+    position: fixed;
+    height: calc(100% - 45px);
+    z-index: 20;
 }
 
 main{
     position: relative;
     flex: 1 1 auto;
-    overflow-x: auto;
-    overflow-y: hidden;
+    display: flex;
+    flex-direction: column;
+    min-width: 600px;
+    padding-left: 348px;
+}
+
+.sidebar-expanded main{
+    padding-left: 480px;
 }
 
 #dashboard-menu{
-    min-width: 55px;
+    width: 68px;
+    color: white;
+    overflow: hidden;
+    padding: 25px 0;
 }
 
-#sidebar.expanded #dashboard-menu{
-    width: 250px;
+#menu-wrapper{
+    width: 200px;
+}
+
+.sidebar-expanded #dashboard-menu{
+    width: 200px;
+}
+
+.sidebar-expanded .menu-text{
+    opacity: 1;
+}
+
+.sidebar-expanded .collapse{
+    display: block;
+}
+
+.sidebar-expanded .expand{
+    display: none;
+}
+
+#sidebar .collapse{
+    display: none;
 }
 
 #bucket-list{
@@ -115,9 +177,9 @@ main{
 
 #bucket-list-wrapper{
     padding: 0px;
-    height: 100%;
-    overflow-x: hidden;
-    overflow-y: auto;
+    min-height: 100%;
+    // overflow-x: hidden;
+    // overflow-y: auto;
 }
 
 #header-buckets{
@@ -138,4 +200,96 @@ main{
     text-overflow: ellipsis;
     text-transform: uppercase;
     color: #a2a3a3;
+}
+
+.d-menu-item{
+    display: block;
+    padding: 4px 20px;
+    cursor: pointer;
+
+    &:hover, &.current{
+        background: lighten($primaryColor, 5%);
+    }
+}
+
+.menu-icon{
+    float: left;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    margin-right: 8px;
+
+    img{
+        display: block;
+        width: 100%;
+    }
+
+    &.lightbg{
+        background: white;
+    }
+}
+
+.menu-text{
+    float: left;
+    width: calc(100% - 36px);
+    opacity: 0;
+    color: white;
+
+    span.ellipsable{
+        line-height: 28px;
+
+    }
+}
+
+#main-content{
+    position: relative;
+    margin: 0 0 0 25px;
+    min-height: 100%;
+}
+
+#content-header{
+    position: relative;
+}
+
+.pagelet-title{
+    display: inline-block;
+    font-size: 19px;
+    line-height: 45px;
+}
+
+.pagelet-title-wrapper{
+    max-width: 520px;
+    margin-left: 308px;
+}
+
+.sidebar-expanded .pagelet-title-wrapper{
+    margin-left: 440px;
+}
+
+#context-actions{
+    list-style: none;
+    padding: 0;
+
+    li{
+        float: left;
+
+        a{
+            display: inline-block;
+            text-decoration: none;
+            color: inherit;
+            line-height: 45px;
+            padding: 0 8px;
+
+            &:hover{
+                background: #efefef;
+            }
+        }
+    }
+}
+
+#the-content{
+    height: calc(100% - 65px);
+    padding: 25px 0;
+    // overflow-x: hidden;
+    // overflow-y: auto;
 }
