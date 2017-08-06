@@ -4,7 +4,7 @@
 *{
     margin: 0; 
     padding: 0;
-    animation: all .2s;
+    box-sizing: border-box;
 }
 
 body{
@@ -177,9 +177,9 @@ main{
 
 #bucket-list-wrapper{
     padding: 0px;
-    min-height: 100%;
-    // overflow-x: hidden;
-    // overflow-y: auto;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 #header-buckets{
@@ -281,7 +281,7 @@ main{
             padding: 0 8px;
 
             &:hover{
-                background: #efefef;
+                background: lighten($primaryColorDark, 5%);
             }
         }
     }

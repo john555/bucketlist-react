@@ -120,28 +120,9 @@ class App extends Component {
             <main>
               <div id="main-content">
                 <div id="the-content">
-                  <div id="bucket">
+                  <div id="bucket-items" className="left">
                     <BucketItem />
                     <BucketItem />
-                    <BucketItem />
-                    <BucketItem />
-                    <BucketItem />
-                    <BucketItem />
-                    <BucketItem />
-                    <BucketItem />
-                    <BucketItem />
-                    <BucketItem />
-                    <BucketItem />
-                    <BucketItem />
-                    <BucketItem />
-                    <BucketItem />
-                    <BucketItem />
-                    <BucketItem />
-                    <BucketItem />
-                    <BucketItem />
-                    <BucketItem />
-                    <BucketItem />
-                    
                   </div>
                 </div>
               </div>

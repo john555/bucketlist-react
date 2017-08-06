@@ -16,29 +16,30 @@ class BucketItem extends Component{
                 </div> 
                 <div className="item-date">
                     <span className="day"> 15</span>
-                    <span className="mon-year"></span>
+                    <span className="mon-year">July, 2017</span>
                     <span className="status-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="-10 -18 100 135"><circle cx="50" cy="50" r="50" fill="none" stroke="#bddad5" strokeWidth="6"/><path fill="#5dc2af" d="M72 25L42 71 27 56l-4 4 20 20 34-52z"/></svg>
                     </span>
                 </div>
                 <div className="item-details">
-                    <span className="item-title">
-                        <span className="title-value" contentEditable>Title</span>
+                    <div className="item-title">
+                        <span className="title-value ">Title of the bucket  of the bucket  of the bucket  of the bucket  of the bucket </span>
                         <input type="text" className="js-item-title" placeholder="Title" value="" />
-                    </span>
+                    </div>
+                     <div className="timestamp">
+                        <span>
+                            <span className="js-timestamp">Yesterday at 2:00PM</span>
+                        </span>
+                    </div>
                     <div className="item-notes">
-                        <span className="desc-value">Description</span>
+                        <span className="desc-value">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam tempore numquam beatae cum quasi ipsa distinctio mollitia quidem exercitationem at, consequuntur porro! Similique sapiente quia tempora ducimus expedita obcaecati odio!</span>
                         <textarea placeholder="Description" className="js-item-description"></textarea>
                     </div>
                     <div className="js-item-date-wrapper">
                         <label htmlFor="new-date">Target date</label>
                         <input id="new-date" type="date" className="js-item-date" value="" />
                     </div>
-                    <div className="timestamp">
-                        <span>
-                            Created on <span className="js-timestamp">Yesterday at 2:00PM</span>
-                        </span>
-                    </div>
+                   
                     <div className="item-actions">
                         <div className="right">
                             <button className="btn btn-primary js-save-item">Save</button>

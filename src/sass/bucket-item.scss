@@ -1,30 +1,30 @@
-#bucket{
+#bucket-items{
     width: 630px;
 }
-#bucket .bucket-item{
+#bucket-items .bucket-item{
     background: white;
     padding: 16px;
     border-left: 3px solid #ce6187;;
     box-shadow: 1px 1px 20px rgba(0,0,0,.1);
 }
 
-#bucket .bucket-item.complete{
+#bucket-items .bucket-item.complete{
     border-left-color: #69d6b0
 }
 
-#bucket .bucket-item.complete .day{
+#bucket-items .bucket-item.complete .day{
     background-color: #69d6b0;
 }
 
-#bucket .bucket-item.complete .status-icon{
-    display: none;
+#bucket-items .bucket-item.complete .status-icon{
+    display: block;
 }
 
-#bucket .bucket-item.complete .item-details,
-#bucket .bucket-item.complete .item-date{
+#bucket-items .bucket-item.complete .item-details,
+#bucket-items .bucket-item.complete .item-date{
     opacity: .8;
 }
-#bucket .bucket-item.complete .item-details{
+#bucket-items .bucket-item.complete .item-details{
     text-decoration: line-through;
 }
 .bucket-item svg path{
@@ -34,7 +34,7 @@
     display: block;
 }
 
-#bucket .bucket-item{
+#bucket-items .bucket-item{
     margin-bottom: 20px;
 }
 
@@ -149,7 +149,7 @@
 }
 
 .item-details .item-title{
-    font-size: 19px;
+    font-size: 14px;
     color: #555
 }
 
@@ -203,7 +203,7 @@
     display: block;
 }
 .timestamp{
-    margin: 5px 0;
+    margin: 0 0 8px;
     font-size: 11px;
 }
 .edit-mode .title-value,
