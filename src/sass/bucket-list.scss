@@ -1,6 +1,7 @@
 .bucket-container{
     padding-bottom: 80px;
 }
+
 .bucket{
     display: block;
     position: relative;
@@ -12,6 +13,14 @@
 
     &:hover, &.active{
         background: #f6f5f7;
+
+        img{ 
+            opacity: 1;
+        }
+
+        a{
+            color: inherit;
+        }
     }
 }
 
@@ -25,6 +34,10 @@
     width: 18px;
     height: 18px;
     margin-right: 10px;
+
+    img{
+        opacity: .3;
+    }
 }
 
 .bucket-content{

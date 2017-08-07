@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import BucketList from './components/BucketList.js';
 import BucketItem from './components/BucketItem.js';
 import logo from './images/logo.svg'
-import defaultProfilePic from './images/profile-pic.png';
 import bucketIconLight from './images/bucket-light.svg';
 import $ from 'jquery';
 
