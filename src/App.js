@@ -6,13 +6,48 @@ import bucketIconLight from './images/bucket-light.svg';
 import $ from 'jquery';
 
 class App extends Component {
-
   // constructor(){
   //   super();
   // }
 
   componentWillMount(){
-    
+    this.state = {
+      user: {},
+      currentBucket: [],
+      buckets: []
+    };
+  }
+
+  componentDidMount(){
+    let {state} = this;
+
+    state.buckets = this.getBuckets();
+    state.currentBucket = {
+      name:"Learning bucket", 
+      id: 1,
+      description: "This is where all the PHP stuff goes",
+      items: [
+        {
+            title:"PHP web application development tutorials", 
+            is_complete: false,
+            id: 1,
+            description: "Iwill learn PHP web dev",
+            due_date: "2017/12/10",
+            created_at: "2017/12/10"
+
+        },
+        {
+            title:"Go programming", 
+            is_complete: true,
+            id: true,
+            description: "I am looking forward to this",
+            due_date: "2017/12/10",
+            created_at: "2017/12/10"
+
+        }
+      ]
+    };
+    this.setState(state);
   }
 
   collapseSidebar(){
@@ -23,7 +58,53 @@ class App extends Component {
     $('body').addClass('sidebar-expanded');
   }
 
+  getBuckets(){
+    return [
+            {
+                name:"Learning bucket", 
+                id: 1,
+                description: "This is where all the stuff to learn goes"
+            },
+            {
+                name: 'Java application development tutorials',
+                id: 2, 
+                description:"Description 1"
+            }
+        ]
+  }
+
+  switchCurrentBucket(){
+
+    // do nothing if current bucket is clicked
+    console.log(this);
+  }
+
+  renderItems(){
+    let {items} = this.state.currentBucket;
+
+    if (!items || items.length === 0){
+      return (
+        <div className="no-items">
+
+        </div>
+      );
+    }
+
+    return items.map(item => {
+      return (
+        <BucketItem key={item.id}
+          title={item.title} 
+          description={item.description}
+          dueDate={item.due_date}
+          isComplete={item.is_complete}
+          createdAt={item.created_at} />
+      );
+    });
+  }
+
   render() {
+    let items = this.renderItems();
+
     return (
       <div id="web-container">
         <div id="top-bar">
@@ -35,7 +116,7 @@ class App extends Component {
             </div>
             <div className="left">
               <div className="left pagelet-title-wrapper ellipsable">
-                <span className="pagelet-title">Java application development</span>
+                <span className="pagelet-title">{this.state.currentBucket.name}</span>
               </div>
             </div>
             <div className="right">
@@ -113,7 +194,7 @@ class App extends Component {
                    <span className="bucket-title uppercase">My buckets </span>
                  </div>
                  <div id="bucket-list-wrapper">
-                   <BucketList/>
+                   <BucketList loadBucket={this.switchCurrentBucket} buckets={this.state.buckets} currentBucketId={this.state.currentBucket.id}/>
                  </div>
                </div>
             </div>
@@ -121,8 +202,7 @@ class App extends Component {
               <div id="main-content">
                 <div id="the-content">
                   <div id="bucket-items" className="left">
-                    <BucketItem />
-                    <BucketItem />
+                    {items}
                   </div>
                 </div>
               </div>

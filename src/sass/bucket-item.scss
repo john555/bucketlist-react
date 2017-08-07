@@ -33,7 +33,9 @@
 .bucket-item.complete svg path{
     display: block;
 }
-
+.bucket-item.menu-open .actions{
+    display: block;
+}
 #bucket-items .bucket-item{
     margin-bottom: 20px;
 }

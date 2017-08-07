@@ -2,51 +2,50 @@ import React, { Component } from 'react';
 import '../css/bucket-list.min.css';
 import bucketIcon from '../images/bucket.svg';
 
-class Bucket extends Component{
+class BucketList extends Component{
     constructor(){
         super();
-        this.state = {
-            buckets: [
-                {
-                title: 'Java application development tutorials', description:"Description 1"
-            },
-            {
-                title: 'Bucket 2', description:"Description 1"
-            },
-            {
-                title: 'Bucket 2', description:"Description 1"
-            },
-            {
-                title: 'Bucket 2', description:"Description 1"
-            },
-            {
-                title: 'Bucket 2', description:"Description 1"
-            },
-            {
-                title: 'Bucket 2', description:"Description 1"
-            }
 
-        ]
+        this.state = {
+            buckets: []
         }
     }
 
-    onComponentWillMount(){
-
+    componentDidMount(){
+        // 
+        //  console.log(this.props);
     }
 
     render(){
-        let index = 0;
-        let buckets = this.state.buckets.map(function(bucket){
-            index++;
+
+        if (!this.props.buckets || this.props.buckets.length === 0){
             return (
-                <a key={index} className="bucket" href="">
+                <div className="no-buckets">No buckets to display.</div>
+            )
+        }
+       
+        let buckets = this.props.buckets.map(bucket => {
+            let classes = "bucket";
+            
+            if (this.props && this.props.currentBucketId && bucket.id === this.props.currentBucketId){
+                classes += " active";
+            }
+
+            let changeBucketAction = null;
+
+            if (this.props.loadBucket){
+                changeBucketAction = this.props.loadBucket;
+            }
+
+            return (
+                <a key={bucket.id} className={classes} onClick={changeBucketAction}>
                     <div className="icon-wrapper">
                         <img src={bucketIcon} alt="bucket icon"/>
                     </div>
                     <div className="bucket-content">
                         <div className="bucket-title">
                             <span className="ellipsable">
-                                {bucket.title}
+                                {bucket.name}
                             </span>
                         </div>
                         <div className="bucket-description">
@@ -68,4 +67,4 @@ class Bucket extends Component{
     }
 }
 
-export default Bucket; 
+export default BucketList; 

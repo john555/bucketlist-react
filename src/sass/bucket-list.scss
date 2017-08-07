@@ -10,6 +10,7 @@
     background: #fff;
     text-decoration: none;
     color: inherit;
+    cursor: pointer;
 
     &:hover, &.active{
         background: #f6f5f7;
@@ -28,6 +29,10 @@
     margin-top: 0px;
 }
 
+.no-buckets{
+    padding: 20px;
+    color: #a5a6a4;
+} 
 
 .icon-wrapper{
     float: left;
