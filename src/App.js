@@ -4,6 +4,7 @@ import BucketItem from './components/BucketItem.js';
 import logo from './images/logo.svg'
 import defaultProfilePic from './images/profile-pic.png';
 import bucketIconLight from './images/bucket-light.svg';
+import $ from 'jquery';
 
 class App extends Component {
 
@@ -12,21 +13,15 @@ class App extends Component {
   // }
 
   componentWillMount(){
-    this.bindEvents();
+    
   }
 
-  bindEvents(){
-    // let collapse = this.getElementByClassName('collapse');
-    // let expand = this.getElementByClassName('expand');
+  collapseSidebar(){
+    $('body').removeClass('sidebar-expanded');
+  }
 
-    // collapse.addEventListener('click', function(e){
-    //   self.classList.remove('expanded');
-    // });
-
-    // expand.addEventListener('click', function(e){
-    //   self.classList.add('expanded');
-    
-    // });
+  expandSidebar(){
+    $('body').addClass('sidebar-expanded');
   }
 
   render() {
@@ -50,13 +45,19 @@ class App extends Component {
                   <div className="right">
                     <ul id="context-actions">
                       <li>
-                        <a href="">Add item</a>
+                        <a href="" title="Add a new item">
+                          <i className="glyphicon glyphicon-plus"></i>
+                        </a>
                       </li>
                       <li>
-                        <a href="">Edit</a>
+                        <a href="" title="Edit bucket">
+                          <i className="glyphicon glyphicon-pencil"></i>
+                        </a>
                       </li>
                       <li>
-                        <a href="">Delete</a>
+                        <a href="" title="Delete bucket">
+                          <i className="glyphicon glyphicon-trash"></i>
+                        </a>
                       </li>
                     </ul>
                     <div className="clearfix"></div>
@@ -71,8 +72,8 @@ class App extends Component {
                <div id="dashboard-menu">
                  <div id="menu-wrapper">
                    <a className="d-menu-item">
-                    <div id="profile-pic-wrapper" className="menu-icon lightbg">
-                      <img src={defaultProfilePic} alt="Profile"/>
+                    <div className="menu-icon">
+                      <i className="glyphicon glyphicon-user"></i>
                     </div>
                     <div id="user-details" className="menu-text">
                       <span className="ellipsable">John doe</span>
@@ -80,7 +81,7 @@ class App extends Component {
                     <div className="clearfix"></div>
                   </a>
                     <a className="d-menu-item current">
-                    <div id="profile-pic-wrapper" className="menu-icon">
+                    <div className="menu-icon">
                       <img src={bucketIconLight} alt="Bucket icon"/>
                     </div>
                     <div id="user-details" className="menu-text">
@@ -88,18 +89,18 @@ class App extends Component {
                     </div>
                     <div className="clearfix"></div>
                   </a>
-                  <a className="d-menu-item collapse">
-                    <div id="profile-pic-wrapper" className="menu-icon">
-                      <img src={defaultProfilePic} alt="Settings icon"/>
+                  <a className="d-menu-item collapse" onClick={this.collapseSidebar}>
+                    <div className="menu-icon">
+                      <i className="glyphicon glyphicon-chevron-left"></i>
                     </div>
                     <div id="user-details" className="menu-text">
                       <span className="ellipsable">Collapse</span>
                     </div>
                     <div className="clearfix"></div>
                   </a>
-                  <a className="d-menu-item expand">
+                  <a className="d-menu-item expand" onClick={this.expandSidebar}>
                     <div id="profile-pic-wrapper" className="menu-icon">
-                      <img src={defaultProfilePic} alt="Settings icon"/>
+                      <i className="glyphicon glyphicon-chevron-right"></i>
                     </div>
                     <div id="user-details" className="menu-text">
                       <span className="ellipsable">Expand</span>
