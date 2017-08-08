@@ -16,10 +16,6 @@
     background-color: #69d6b0;
 }
 
-#bucket-items .bucket-item.complete .status-icon{
-    display: block;
-}
-
 #bucket-items .bucket-item.complete .item-details,
 #bucket-items .bucket-item.complete .item-date{
     opacity: .8;
@@ -113,7 +109,7 @@
 }
 
 .complete .status-icon{
-    display: flex;
+    display: none;
 }
 
 .status-icon svg{

@@ -1,0 +1,47 @@
+.flex-center{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#anonymouscontent{
+    flex-direction: column;
+}
+
+header#header-anonymous{
+    margin: 40px 0 0px;
+    display: flex;
+    align-items: center;
+    flex-direction: column
+}
+
+header#header-anonymous a.logo{
+    width: 160px;
+}
+
+a.logo{
+    display: block;
+}
+
+a.logo img{
+    display: block;
+    width: 100%;
+}
+
+.form-heading{
+    display: block;
+    font-size: 20px;
+    padding: 20px 0;
+    text-align: center;
+}
+
+#entry-form-content{
+    width: 320px;
+}
+
+#entry-form-content .copy{
+    margin: 60px 0;
+}
+
+.input-lg {
+    width: 100%;
+}

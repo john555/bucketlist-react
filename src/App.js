@@ -39,7 +39,7 @@ class App extends Component {
         {
             title:"Go programming", 
             is_complete: true,
-            id: true,
+            id: 2,
             description: "I am looking forward to this",
             due_date: "2017/07/10",
             created_at: "2017/03/10"
@@ -73,6 +73,18 @@ class App extends Component {
         ]
   }
 
+  toggleItem(itemId){
+    
+    let {state} = this;
+    let {currentBucket} = state;
+    let {items} = currentBucket;
+    
+    let index = items.findIndex(item => item.id === itemId);
+    items[index].is_complete = !items[index].is_complete;
+    state.currentBucket = currentBucket;
+    this.setState(state);
+  }
+
   switchCurrentBucket(){
 
     // do nothing if current bucket is clicked
@@ -93,11 +105,13 @@ class App extends Component {
     return items.map(item => {
       return (
         <BucketItem key={item.id}
+          id={item.id}
           title={item.title} 
           description={item.description}
           dueDate={item.due_date}
           isComplete={item.is_complete}
-          createdAt={item.created_at} />
+          createdAt={item.created_at}
+          toggleItem={this.toggleItem.bind(this)} />
       );
     });
   }

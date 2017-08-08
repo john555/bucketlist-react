@@ -31,7 +31,7 @@ class BucketItem extends Component{
 
     }
     
-    toggleContextMenu(){
+    toggleContextMenu(proxy, event){
         let $item = $(this.refs.item);
         $item.toggleClass('menu-open');
     }
@@ -49,8 +49,8 @@ class BucketItem extends Component{
     }
 
     toggleStatus(){
-
-      
+        this.props.toggleItem(this.props.id);
+        
     }
 
     deleteItem(){
@@ -102,11 +102,14 @@ class BucketItem extends Component{
     }
 
     render(){
-        let classes = "bucket-item";
+        let classes = "bucket-item",
+            statusText = "Mark as complete";
         
         if (this.props.isComplete){
             classes += " complete";
+            statusText = 'Mark as incomplete';
         }
+        
         
         return (
             <div className={classes} ref="item">
@@ -114,8 +117,8 @@ class BucketItem extends Component{
                     <span className="ellipses" onClick={this.toggleContextMenu.bind(this)}>•••</span>
                     <div className="actions">
                         <a className="action js-edit-item" onClick={this.enterEditMode.bind(this)}>Edit</a>
-                        <a className="action js-toggle-item-status" onClick={this.toggleStatus.bind(this)}>Mark as incomplete</a>
-                        <a className="action js-delete-item" onClick={this.deleteItem.bind(this)}>Delete</a>
+                        <a className="action" onClick={this.toggleStatus.bind(this)}>{statusText}</a>
+                        <a className="action js-delete-item" onClick={this.deleteItem.bind(this, this.props.id)}>Delete</a>
                     </div>
                 </div> 
                 <div className="item-date">
