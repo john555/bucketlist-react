@@ -7,6 +7,20 @@ class BucketItem extends Component{
     constructor(){
         super();
         this.bindEvents();
+        this.months = [
+            'January', 
+            'February', 
+            'March', 
+            'April', 
+            'May', 
+            'June', 
+            'July', 
+            'August', 
+            'September', 
+            'October', 
+            'November', 
+            'December'
+        ];
     }
 
     bindEvents(){
@@ -36,18 +50,55 @@ class BucketItem extends Component{
 
     toggleStatus(){
 
+      
     }
 
     deleteItem(){
         
     }
 
+    getCreatedDate(){
+
+        if (!this.props || !this.props.createdAt){
+            return null;
+        }
+
+        let createdAt = new Date(this.props.createdAt);
+        let result = `${this.months[createdAt.getMonth()]} `;
+
+        let date = createdAt.getDate();
+
+        if (date < 9){
+            result += `0${date}, `;
+        } else {
+            result += `${date}, `;
+        }
+        
+        return result + `${createdAt.getFullYear()}`;
+    }
+
     getDueDay(){
-        return 7;
+
+        if (!this.props || !this.props.dueDate){
+            return null;
+        }
+
+        let date = new Date(this.props.dueDate);
+        let day = date.getDate();
+        if (day < 9) {
+            return '0' + day;
+        }
+
+        return day.toString();
     }
 
     getDueMonthAndYearString(){
-        return "July, 2017";
+        if (!this.props || !this.props.dueDate){
+            return null;
+        }
+
+        let date = new Date(this.props.dueDate);
+        return this.months[date.getMonth()] + ', ' + date.getFullYear();
     }
 
     render(){
@@ -81,7 +132,7 @@ class BucketItem extends Component{
                     </div>
                      <div className="timestamp">
                         <span>
-                            <span className="js-timestamp">{this.props.createdAt}</span>
+                            <span className="js-timestamp">{this.getCreatedDate()}</span>
                         </span>
                     </div>
                     <div className="item-notes">

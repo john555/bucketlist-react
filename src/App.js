@@ -33,7 +33,7 @@ class App extends Component {
             id: 1,
             description: "Iwill learn PHP web dev",
             due_date: "2017/12/10",
-            created_at: "2017/12/10"
+            created_at: "2017/05/10"
 
         },
         {
@@ -41,8 +41,8 @@ class App extends Component {
             is_complete: true,
             id: true,
             description: "I am looking forward to this",
-            due_date: "2017/12/10",
-            created_at: "2017/12/10"
+            due_date: "2017/07/10",
+            created_at: "2017/03/10"
 
         }
       ]
