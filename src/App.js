@@ -1,53 +1,37 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 import BucketList from './components/BucketList.js';
 import BucketItem from './components/BucketItem.js';
+import Config from './App.Config';
 import logo from './images/logo.svg'
 import bucketIconLight from './images/bucket-light.svg';
 import $ from 'jquery';
 
 class App extends Component {
+
   // constructor(){
   //   super();
+
   // }
 
   componentWillMount(){
+    let auth = localStorage.getItem('auth');
     this.state = {
       user: {},
-      currentBucket: [],
-      buckets: []
+      currentBucket: {},
+      buckets: [],
+      auth: JSON.parse(auth)
     };
+
+    this.xhr = axios.create({
+        headers: {'X-Token': this.state.auth.token},
+        baseURL: Config.API_BASE_URL
+    });
+
   }
 
   componentDidMount(){
-    let {state} = this;
-
-    state.buckets = this.getBuckets();
-    state.currentBucket = {
-      name:"Learning bucket", 
-      id: 1,
-      description: "This is where all the PHP stuff goes",
-      items: [
-        {
-            title:"PHP web application development tutorials", 
-            is_complete: false,
-            id: 1,
-            description: "Iwill learn PHP web dev",
-            due_date: "2017/12/10",
-            created_at: "2017/05/10"
-
-        },
-        {
-            title:"Go programming", 
-            is_complete: true,
-            id: 2,
-            description: "I am looking forward to this",
-            due_date: "2017/07/10",
-            created_at: "2017/03/10"
-
-        }
-      ]
-    };
-    this.setState(state);
+    this.loadBuckets();
   }
 
   collapseSidebar(){
@@ -56,6 +40,29 @@ class App extends Component {
 
   expandSidebar(){
     $('body').addClass('sidebar-expanded');
+  }
+
+  loadBuckets(){
+    this.xhr.get('/bucketlists')
+    .then(request => {
+      this.setState({buckets: request.data});
+      this.loadBucket(request.data[0].id);
+    })
+    .catch(error => {
+      // window.location = '/';
+      console.log(error);
+    });
+  }
+
+  loadBucket(id){
+    this.xhr.get('/bucketlists/' + id)
+    .then(request => {
+      this.setState({currentBucket: request.data});
+    })
+    .catch(error => {
+      // window.location = '/';
+      console.log(error);
+    });
   }
 
   getBuckets(){
@@ -88,7 +95,7 @@ class App extends Component {
   switchCurrentBucket(){
 
     // do nothing if current bucket is clicked
-    console.log(this);
+    // console.log(this);
   }
 
   renderItems(){
@@ -97,7 +104,7 @@ class App extends Component {
     if (!items || items.length === 0){
       return (
         <div className="no-items">
-
+          <p>There are no items to display</p>
         </div>
       );
     }
