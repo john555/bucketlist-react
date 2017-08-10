@@ -22,6 +22,7 @@ class App extends Component {
     this.onNewBucketChange = this.onNewBucketChange.bind(this);
     this.onNewItemChange = this.onNewItemChange.bind(this);
     this.onNewBucketFormSubmit = this.onNewBucketFormSubmit.bind(this);
+    this.onNewItemFormSubmit = this.onNewItemFormSubmit.bind(this);
     this.toggleBucketForm = this.toggleBucketForm.bind(this);
     this.toggleItemForm = this.toggleItemForm.bind(this);
   }
@@ -75,6 +76,36 @@ class App extends Component {
     
   }
 
+  onNewItemFormSubmit(e){
+    e.preventDefault();
+    let {state} = this;
+    state.newItem.formClass = 'working';
+    state.newItem.isLoading = true;
+    this.setState(state);
+    const {title, dueDate, description} = this.state.newItem;
+
+    xhr.post(`/bucketlists/${this.state.currentBucket.id}/items`, {
+      title: title.trim(),
+      due_date: dueDate.trim(),
+      description: description.trim()
+    })
+    .then(request => {
+      const item = request.data;
+      state.currentBucket.items = [item, ...state.currentBucket.items];
+      state.newItem.title = '';
+      state.newItem.dueDate = '';
+      state.newItem.description = '';
+      state.newItem.formClass = 'succeeded';
+      state.newItem.isLoading = false;
+      this.setState(state);
+    })
+    .catch(() => {
+      state.newItem.formClass = 'failed';
+      state.newItem.isLoading = false;
+      this.setState(state);
+    });
+  }
+
   componentDidMount(){
     this.loadBuckets();
   }
@@ -105,7 +136,9 @@ class App extends Component {
   }
 
   onNewItemChange(e){
-
+    let {state} = this;
+    state.newItem[e.target.name] = e.target.value;
+    this.setState(state);
   }
 
   loadBucket(id){
@@ -114,7 +147,7 @@ class App extends Component {
       this.setState({currentBucket: request.data});
     })
     .catch(() => {
-      // window.location = '/';
+      // handle error appropriately
     });
   }
 
@@ -144,6 +177,9 @@ class App extends Component {
 
   toggleItemForm(e){
     e.preventDefault();
+    let {state} = this;
+    state.newItem.formClass = '';
+    this.setState(state)
     $('body').toggleClass('add-item');
   }
 
@@ -361,7 +397,7 @@ class App extends Component {
             </form>
           </div>
           <div id="add-item" className="overlay-content" onClick={this.stopPropagation}>
-            <form onSubmit={this.onNewBucketFormSubmit} 
+            <form onSubmit={this.onNewItemFormSubmit} 
               className={this.state.newItem.formClass}>
               <div className="overlay-header">
                 <span className="o-title">Add a new goal to - {this.state.currentBucket.name}</span>
@@ -373,7 +409,8 @@ class App extends Component {
                     name="title" 
                     type="text" 
                     className="form-control" 
-                    placeholder="Title" />
+                    placeholder="Title"
+                    required />
                 </div>
                 <div className="form-group">
                   <label htmlFor="">Target date</label>
@@ -382,7 +419,8 @@ class App extends Component {
                     name="dueDate" 
                     type="date" 
                     className="form-control" 
-                    placeholder="Title" />
+                    placeholder="Title"
+                    required />
                 </div>
                 <div className="form-group">
                   <textarea onChange={this.onNewItemChange} 
@@ -390,7 +428,8 @@ class App extends Component {
                     name="description" 
                     placeholder="Description" 
                     rows="4" type="text" 
-                    className="form-control"></textarea>
+                    className="form-control"
+                    required ></textarea>
                 </div>
                 <div className="form-group buttons">
                   <div className="right">
@@ -399,7 +438,7 @@ class App extends Component {
                         <i className="glyphicon glyphicon-ok"></i>
                       </span>
                       <span className="feedback-message">
-                        Added a item this bucket ({this.state.currentBucket.name}).
+                        Added a goal to ({this.state.currentBucket.name}).
                       </span>
                     </div>
                     <div className="form-feedback negative">
@@ -414,7 +453,7 @@ class App extends Component {
                       <span className="feedback-icon loading"></span>
                       <span className="feedback-message">Processing...</span>
                     </div>
-                    <button className="btn btn-primary">Done</button>
+                    <button className="btn btn-primary" disabled={this.state.newItem.isLoading}>Done</button>
                     <button onClick={this.toggleItemForm} className="btn btn-default">Close</button>
                   </div>
                   <div className="clearfix"></div>
