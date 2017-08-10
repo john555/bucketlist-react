@@ -134,8 +134,21 @@ class App extends Component {
     });
   }
 
-  onItemEdit(id){
-
+  onItemEdit(id, data){
+    return xhr.put(`/bucketlists/${this.state.currentBucket.id}/items/${id}`, data)
+    .then(response => {
+      let newItem = response.data;
+      let {state} = this;
+      let {currentBucket} = state;
+      let {items} = currentBucket;
+      
+      let index = items.findIndex(item => item.id === newItem.id);
+      state.currentBucket.items[index] = newItem;
+      this.setState(state);
+    })
+    .catch(() => {
+      // handle error appropriately 
+    });
   }
 
   componentDidMount(){
@@ -306,7 +319,7 @@ class App extends Component {
     if (items.length === 0){
       return (
         <div className="no-items">
-          <a className="quick-action" onClick={this.toggleItemForm}>Add a new goal.</a>
+          <a className="quick-action" onClick={this.toggleItemForm.bind(this)}>Add a new goal.</a>
         </div>
       );
     }
@@ -321,7 +334,7 @@ class App extends Component {
           isComplete={item.is_complete}
           createdAt={item.created_at}
           toggleItem={this.toggleItem}
-          onItemEdit={this.onItemEdit}
+          onItemEdit={this.onItemEdit.bind(this)}
           onItemDelete={this.onItemDelete} />
       );
     });
@@ -559,7 +572,7 @@ class App extends Component {
                         <span className="feedback-message">Processing...</span>
                       </div>
                       <button className="btn btn-primary" disabled={this.state.newItem.isLoading}>Add</button>
-                      <button onClick={this.toggleItemForm} className="btn btn-default">Close</button>
+                      <button onClick={this.toggleItemForm.bind(this)} className="btn btn-default">Close</button>
                     </div>
                     <div className="clearfix"></div>
                   </div>

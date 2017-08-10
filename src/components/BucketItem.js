@@ -89,6 +89,38 @@ class BucketItem extends Component{
         return this.months[date.getMonth()] + ', ' + date.getFullYear();
     }
 
+    editItem(e){
+        e.preventDefault();
+        const data = {
+            title: this.refs.title.value.trim(),
+            due_date: this.refs.dueDate.value.trim(),
+            description: this.refs.description.value.trim()
+        }
+
+        this.props.onItemEdit.bind(this);
+        
+        this.props.onItemEdit(this.props.id, data)
+        .then(() => {
+            this.leaveEditMode();
+        });
+    }
+
+    formatDate(str){
+        const date = new Date(str);
+        let m = date.getMonth() + 1;
+        let d = date.getDate();
+
+        if (m < 9){
+            m = '0' + m;
+        }
+
+        if (d < 9){
+            d = '0' + d;
+        }
+
+        return `${date.getFullYear()}-${m}-${d}`;
+    }
+
     render(){
         let classes = "bucket-item",
             statusText = "Mark as complete";
@@ -97,8 +129,9 @@ class BucketItem extends Component{
             classes += " complete";
             statusText = 'Mark as incomplete';
         }
-        
-        
+
+        const dueDate = this.formatDate(this.props.dueDate);
+
         return (
             <div className={classes} ref="item">
                 <div className="item-options-menu">
@@ -119,7 +152,7 @@ class BucketItem extends Component{
                 <div className="item-details">
                     <div className="item-title">
                         <span className="title-value ">{this.props.title}</span>
-                        <input type="text" className="js-item-title" placeholder="Title" defaultValue={this.props.title} />
+                        <input ref="title" type="text" className="js-item-title" placeholder="Title" defaultValue={this.props.title} />
                     </div>
                      <div className="timestamp">
                         <span>
@@ -128,16 +161,16 @@ class BucketItem extends Component{
                     </div>
                     <div className="item-notes">
                         <span className="desc-value">{this.props.description}</span>
-                        <textarea placeholder="Description" className="js-item-description" defaultValue={this.props.description}></textarea>
+                        <textarea ref="description" placeholder="Description" className="js-item-description" defaultValue={this.props.description}></textarea>
                     </div>
                     <div className="js-item-date-wrapper">
                         <label htmlFor="new-date">Target date</label>
-                        <input id="new-date" type="date" className="js-item-date" defaultValue={this.props.dueDate} />
+                        <input ref="dueDate" id="new-date" type="date" className="js-item-date" defaultValue={dueDate} />
                     </div>
                    
                     <div className="item-actions">
                         <div className="right">
-                            <button className="btn btn-primary js-save-item" onClick={this.props.onItemEdit.bind(this, this.props.id)}>Save</button>
+                            <button className="btn btn-primary js-save-item" onClick={this.editItem.bind(this)}>Save</button>
                             <button className="btn btn-default js-cancel-edit-item" onClick={this.leaveEditMode.bind(this)}>Cancel</button>
                         </div>
                         <div className="clearfix"></div>
