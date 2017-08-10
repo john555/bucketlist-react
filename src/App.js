@@ -22,13 +22,12 @@ class App extends Component {
   }
 
   bindEvents(){
-    this.onItemBucketClick = this.onItemBucketClick.bind(this);
+    this.onBucketItemClick = this.onBucketItemClick.bind(this);
     this.onNewBucketChange = this.onNewBucketChange.bind(this);
     this.onNewItemChange = this.onNewItemChange.bind(this);
     this.onNewBucketFormSubmit = this.onNewBucketFormSubmit.bind(this);
     this.onNewItemFormSubmit = this.onNewItemFormSubmit.bind(this);
     this.toggleBucketForm = this.toggleBucketForm.bind(this);
-    this.toggleItemForm = this.toggleItemForm.bind(this);
     this.toggleItem = this.toggleItem.bind(this);
     this.onItemEdit = this.onItemEdit;
     this.onItemDelete = this.onItemDelete.bind(this);
@@ -73,6 +72,10 @@ class App extends Component {
       state.newBucket.description = '';
       state.newBucket.formClass = 'succeeded';
       state.newBucket.isLoading = false;
+      
+      if (state.buckets.length === 1){
+        this.loadBucket(bucket.id);
+      }
       this.setState(state);
     })
     .catch(() => {
@@ -85,6 +88,10 @@ class App extends Component {
 
   onNewItemFormSubmit(e){
     e.preventDefault();
+    if (!this.state.currentBucket.id){
+      return;
+    }
+
     let {state} = this;
     state.newItem.formClass = 'working';
     state.newItem.isLoading = true;
@@ -125,10 +132,6 @@ class App extends Component {
     .catch(() => {
       // handle error appropriately 
     });
-  }
-
-  deleteItem(id){
-
   }
 
   onItemEdit(id){
@@ -215,6 +218,10 @@ class App extends Component {
 
   toggleItemForm(e){
     e.preventDefault();
+    if (!this.state.currentBucket.id){
+      return;
+    }
+
     let {state} = this;
     state.newItem.formClass = '';
     this.setState(state)
@@ -227,7 +234,7 @@ class App extends Component {
     $('body').removeClass('add-item');
   }
 
-  onItemBucketClick(id){
+  onBucketItemClick(id){
     
     if (id === this.state.currentBucket.id){
       return;
@@ -236,13 +243,70 @@ class App extends Component {
     this.loadBucket(id);
   }
 
+  onBucketEditClick(e){
+    e.preventDefault();
+    if (!this.state.currentBucket.id){
+      return;
+    }
+
+    
+  }
+
+  onBucketDeleteClick(e){
+    e.preventDefault();
+    if (!this.state.currentBucket.id){
+      return;
+    }
+
+    xhr.delete(`/bucketlists/${this.state.currentBucket.id}`)
+    .then(result => {
+      this.removeBucket(result.data.id);
+    })
+    .catch(() => {
+      // handle error appropriately
+
+    });
+  }
+
+  // removes bucket from state
+  removeBucket(id){
+    let {state} = this;
+    let index = state.buckets.findIndex(bucket => bucket.id === id);
+    state.buckets.splice(index, 1);
+    state.currentBucket = {};
+    this.setState(state);
+    let size = this.state.buckets.length;
+
+    if (size > 0){
+      let [nextBucket] = this.state.buckets;
+      this.loadBucket(nextBucket.id);
+    }
+  }
+
+  // displays goals in the current bucket
   renderItems(){
     let {items} = this.state.currentBucket;
 
-    if (!items || items.length === 0){
+    if (this.state.buckets.length === 0){
       return (
         <div className="no-items">
-          <p>This bucket is empty.</p>
+          <a className="quick-action" onClick={this.toggleBucketForm}>Add a new bucket.</a>
+        </div>
+      );
+    }
+
+    if (!items){
+      return (
+        <div className="no-items">
+          <p>Select a bucket.</p>
+        </div>
+      );
+    }
+
+    if (items.length === 0){
+      return (
+        <div className="no-items">
+          <a className="quick-action" onClick={this.toggleItemForm}>Add a new goal.</a>
         </div>
       );
     }
@@ -283,20 +347,20 @@ class App extends Component {
             <div className="right">
               <header id="content-header">
                   
-                  <div className="right">
+                  <div className={"right "+((this.state.currentBucket.id) ? '':'hidden')}>
                     <ul id="context-actions">
                       <li>
-                        <a href="" title="Add a new item" onClick={this.toggleItemForm}>
+                        <a href="" title="Add a new item" onClick={this.toggleItemForm.bind(this)}>
                           <i className="glyphicon glyphicon-plus"></i>
                         </a>
                       </li>
                       <li>
-                        <a href="" title="Edit bucket">
+                        <a href="" title="Edit bucket" onClick={this.onBucketEditClick.bind(this)}>
                           <i className="glyphicon glyphicon-pencil"></i>
                         </a>
                       </li>
                       <li>
-                        <a href="" title="Delete bucket">
+                        <a href="" title="Delete bucket" onClick={this.onBucketDeleteClick.bind(this)}>
                           <i className="glyphicon glyphicon-trash"></i>
                         </a>
                       </li>
@@ -364,7 +428,7 @@ class App extends Component {
                    <span className="bucket-title uppercase">My buckets </span>
                  </div>
                  <div id="bucket-list-wrapper">
-                   <BucketList onItemClick={this.onItemBucketClick} 
+                   <BucketList onItemClick={this.onBucketItemClick} 
                     buckets={this.state.buckets} 
                     currentBucketId={this.state.currentBucket.id}/>
                  </div>

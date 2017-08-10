@@ -476,3 +476,18 @@ body.add-item #overlay-inner{
         transform: rotate(360deg);
     }
 }
+
+.quick-action{
+    cursor: pointer;
+    color: inherit;
+    display: block;
+    text-align: center;
+    text-decoration: none;
+    padding: 20px;
+    border: 1px dashed #eee;
+
+    &:hover{
+        color: inherit;
+        text-decoration: none;
+    }
+}
