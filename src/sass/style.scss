@@ -332,7 +332,6 @@ main{
     left: 0;
     width: 100%;
     height: 100%;
-    overflow: auto;
 }
 
 .overlay-content{
@@ -340,7 +339,7 @@ main{
     left: 0;
     right: 0;
     width: 600px;
-    margin: 100px auto 0;
+    margin: 100px auto 80px;
     border-radius: 4px;
     background-color: white;
     border: 1px solid #eee;
@@ -399,6 +398,12 @@ span.o-title{
 body.add-bucket, body.add-item{
     overflow: hidden;
 }
+
+body.add-bucket #overlay-inner, 
+body.add-item #overlay-inner{
+    overflow: auto;
+}
+
 .add-bucket #overlay,
 .add-item #overlay{
     pointer-events: all;

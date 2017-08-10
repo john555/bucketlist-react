@@ -44,18 +44,6 @@ class BucketItem extends Component{
         $(this.refs.item).removeClass('edit-mode');
     }
 
-    editItem(){
-
-    }
-
-    toggleStatus(){
-        this.props.toggleItem(this.props.id);
-        
-    }
-
-    deleteItem(){
-        
-    }
 
     getCreatedDate(){
 
@@ -117,8 +105,8 @@ class BucketItem extends Component{
                     <span className="ellipses" onClick={this.toggleContextMenu.bind(this)}>•••</span>
                     <div className="actions">
                         <a className="action js-edit-item" onClick={this.enterEditMode.bind(this)}>Edit</a>
-                        <a className="action" onClick={this.toggleStatus.bind(this)}>{statusText}</a>
-                        <a className="action js-delete-item" onClick={this.deleteItem.bind(this, this.props.id)}>Delete</a>
+                        <a className="action" onClick={this.props.toggleItem.bind(this, this.props.id)}>{statusText}</a>
+                        <a className="action js-delete-item" onClick={this.props.onItemDelete.bind(this, this.props.id)}>Delete</a>
                     </div>
                 </div> 
                 <div className="item-date">
@@ -149,7 +137,7 @@ class BucketItem extends Component{
                    
                     <div className="item-actions">
                         <div className="right">
-                            <button className="btn btn-primary js-save-item" onClick={this.editItem.bind(this)}>Save</button>
+                            <button className="btn btn-primary js-save-item" onClick={this.props.onItemEdit.bind(this, this.props.id)}>Save</button>
                             <button className="btn btn-default js-cancel-edit-item" onClick={this.leaveEditMode.bind(this)}>Cancel</button>
                         </div>
                         <div className="clearfix"></div>

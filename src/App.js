@@ -18,6 +18,10 @@ class App extends Component {
   
   constructor(){
     super();
+    this.bindEvents();
+  }
+
+  bindEvents(){
     this.onItemBucketClick = this.onItemBucketClick.bind(this);
     this.onNewBucketChange = this.onNewBucketChange.bind(this);
     this.onNewItemChange = this.onNewItemChange.bind(this);
@@ -25,6 +29,9 @@ class App extends Component {
     this.onNewItemFormSubmit = this.onNewItemFormSubmit.bind(this);
     this.toggleBucketForm = this.toggleBucketForm.bind(this);
     this.toggleItemForm = this.toggleItemForm.bind(this);
+    this.toggleItem = this.toggleItem.bind(this);
+    this.onItemEdit = this.onItemEdit;
+    this.onItemDelete = this.onItemDelete.bind(this);
   }
 
   componentWillMount(){
@@ -104,6 +111,28 @@ class App extends Component {
       state.newItem.isLoading = false;
       this.setState(state);
     });
+  }
+
+  onItemDelete(id){
+    
+    xhr.delete(`/bucketlists/${this.state.currentBucket.id}/items/${id}`)
+    .then(() => {
+      let {state} = this;
+      let index = state.currentBucket.items.findIndex(item => item.id === id);
+      state.currentBucket.items.splice(index, 1);
+      this.setState(state);
+    })
+    .catch(() => {
+      // handle error appropriately 
+    });
+  }
+
+  deleteItem(id){
+
+  }
+
+  onItemEdit(id){
+
   }
 
   componentDidMount(){
@@ -227,7 +256,9 @@ class App extends Component {
           dueDate={item.due_date}
           isComplete={item.is_complete}
           createdAt={item.created_at}
-          toggleItem={this.toggleItem.bind(this)} />
+          toggleItem={this.toggleItem}
+          onItemEdit={this.onItemEdit}
+          onItemDelete={this.onItemDelete} />
       );
     });
   }
