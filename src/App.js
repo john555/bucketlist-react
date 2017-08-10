@@ -7,26 +7,27 @@ import logo from './images/logo.svg'
 import bucketIconLight from './images/bucket-light.svg';
 import $ from 'jquery';
 
+let auth = JSON.parse(localStorage.getItem('auth'));
+
+const xhr = axios.create({
+    headers: {'X-Token': auth.token},
+    baseURL: Config.API_BASE_URL
+});
+
 class App extends Component {
-
-  // constructor(){
-  //   super();
-
-  // }
+  
+  constructor(){
+    super();
+    this.onItemBucketClick = this.onItemBucketClick.bind(this);
+  }
 
   componentWillMount(){
-    let auth = localStorage.getItem('auth');
+    
     this.state = {
       user: {},
       currentBucket: {},
-      buckets: [],
-      auth: JSON.parse(auth)
+      buckets: []
     };
-
-    this.xhr = axios.create({
-        headers: {'X-Token': this.state.auth.token},
-        baseURL: Config.API_BASE_URL
-    });
 
   }
 
@@ -43,7 +44,7 @@ class App extends Component {
   }
 
   loadBuckets(){
-    this.xhr.get('/bucketlists')
+    xhr.get('/bucketlists')
     .then(request => {
       this.setState({buckets: request.data});
       this.loadBucket(request.data[0].id);
@@ -55,7 +56,7 @@ class App extends Component {
   }
 
   loadBucket(id){
-    this.xhr.get('/bucketlists/' + id)
+    xhr.get('/bucketlists/' + id)
     .then(request => {
       this.setState({currentBucket: request.data});
     })
@@ -63,21 +64,6 @@ class App extends Component {
       // window.location = '/';
       console.log(error);
     });
-  }
-
-  getBuckets(){
-    return [
-            {
-                name:"Learning bucket", 
-                id: 1,
-                description: "This is where all the stuff to learn goes"
-            },
-            {
-                name: 'Java application development tutorials',
-                id: 2, 
-                description:"Description 1"
-            }
-        ]
   }
 
   toggleItem(itemId){
@@ -92,10 +78,13 @@ class App extends Component {
     this.setState(state);
   }
 
-  switchCurrentBucket(){
-
-    // do nothing if current bucket is clicked
-    // console.log(this);
+  onItemBucketClick(id){
+    
+    if (id === this.state.currentBucket.id){
+      return;
+    }
+    
+    this.loadBucket(id);
   }
 
   renderItems(){
@@ -104,7 +93,7 @@ class App extends Component {
     if (!items || items.length === 0){
       return (
         <div className="no-items">
-          <p>There are no items to display</p>
+          <p>This bucket is empty.</p>
         </div>
       );
     }
@@ -215,7 +204,9 @@ class App extends Component {
                    <span className="bucket-title uppercase">My buckets </span>
                  </div>
                  <div id="bucket-list-wrapper">
-                   <BucketList loadBucket={this.switchCurrentBucket} buckets={this.state.buckets} currentBucketId={this.state.currentBucket.id}/>
+                   <BucketList onItemClick={this.onItemBucketClick} 
+                    buckets={this.state.buckets} 
+                    currentBucketId={this.state.currentBucket.id}/>
                  </div>
                </div>
             </div>

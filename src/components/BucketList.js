@@ -3,13 +3,10 @@ import '../css/bucket-list.min.css';
 import bucketIcon from '../images/bucket.svg';
 
 class BucketList extends Component{
-    constructor(){
-        super();
-
-        this.state = {
-            buckets: []
-        }
-    }
+    // constructor(){
+    //     super();
+    //     // this.onItemClick = this.onItemClick.bind(this);
+    // }
 
     componentDidMount(){
         // 
@@ -30,15 +27,9 @@ class BucketList extends Component{
             if (this.props && this.props.currentBucketId && bucket.id === this.props.currentBucketId){
                 classes += " active";
             }
-
-            let changeBucketAction = null;
-
-            if (this.props.loadBucket){
-                changeBucketAction = this.props.loadBucket;
-            }
-
+            
             return (
-                <a key={bucket.id} className={classes} onClick={changeBucketAction}>
+                <a key={bucket.id} className={classes} onClick={this.props.onItemClick.bind(this, bucket.id)}>
                     <div className="icon-wrapper">
                         <img src={bucketIcon} alt="bucket icon"/>
                     </div>
