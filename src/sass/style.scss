@@ -302,3 +302,150 @@ main{
     font-size: 18px;
     color: #a5a6a4;
 }
+
+#overlay{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2000;
+    pointer-events: none;
+
+    &::before{
+        content: '';
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        background: rgba(255, 255, 255, .61);
+        transition: opacity 200ms ease-in-out;
+    }
+}
+
+.overlay-content{
+    position: absolute;
+    left: 0;
+    right: 0;
+    width: 600px;
+    margin: 100px auto 0;
+    border-radius: 4px;
+    background-color: white;
+    border: 1px solid #eee;
+    box-shadow: 0 0 30px rgba(0,0,0,.15);
+    transform: translateY(1000px);
+    transition: transform 200ms ease-in-out;
+}
+
+.overlay-header, .overlay-body{
+    padding: 30px 50px 10px;
+}
+
+span.o-title{
+    font-size: 22px;
+    
+}
+
+.form-group textarea {
+    resize: none;
+}
+
+.form-group label{
+    font-weight: normal;
+}
+
+.overlay-body .buttons{
+    margin-top: 20px;
+}
+
+.btn + .btn{
+    margin-left: 20px;
+}
+
+.add-bucket #add-bucket{
+    transform: translateY(0);
+}
+
+.add-item #add-item{
+    transform: translate(0);
+}
+
+.add-bucket #overlay::before,
+.add-item #overlay::before{
+    opacity: 1;
+}
+.add-bucket #overlay,
+.add-item #overlay{
+    pointer-events: all;
+}
+
+.form-feedback{
+    display: none;
+    margin-right: 30px;
+}
+
+.succeeded .form-feedback.positive,{
+    display: inline-block;
+}
+
+.succeeded .form-feedback.negative{
+    display: none;
+}
+
+.failed .form-feedback.negative{
+    display: inline-block;
+}
+
+.failed .form-feedback.positive{
+    display: none;
+}
+
+.working .form-feedback.processing{
+    display: inline-block;
+}
+
+.feedback-icon{
+    display: inline-block;
+    margin-right: 8px;
+    width: 20px;
+    height: 20px;
+    color: white;
+    text-align: center;
+    border-radius: 50%;
+    vertical-align: middle;
+}
+
+.form-feedback.positive .feedback-icon{
+    background: green;
+}
+
+.form-feedback.negative .feedback-icon {
+    background: #b52d2d;
+}
+
+.form-feedback.processing .loading{
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    transform-origin: 50%;
+    animation: rotate 400ms linear infinite;
+    color: #988989;
+    border: 2px solid;
+    border-left-width: 0;
+    border-right-width: 0;
+    border-radius: 50%;
+}
+
+@keyframes rotate{
+    from{
+        transform: rotate(0deg);
+    }
+
+    to{
+        transform: rotate(360deg);
+    }
+}

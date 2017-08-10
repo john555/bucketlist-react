@@ -19,16 +19,60 @@ class App extends Component {
   constructor(){
     super();
     this.onItemBucketClick = this.onItemBucketClick.bind(this);
+    this.onNewBucketChange = this.onNewBucketChange.bind(this);
+    this.onNewItemChange = this.onNewItemChange.bind(this);
+    this.onNewBucketFormSubmit = this.onNewBucketFormSubmit.bind(this);
+    this.toggleBucketForm = this.toggleBucketForm.bind(this);
+    this.toggleItemForm = this.toggleItemForm.bind(this);
   }
 
   componentWillMount(){
     
     this.state = {
       user: {},
+      newItem: {
+        title: '',
+        isLoading: false,
+        formClass : '',
+        dueDate: '',
+        description: ''
+      },
+      newBucket:{
+        name: '',
+        isLoading: false,
+        formClass : '',
+        description: ''
+      },
       currentBucket: {},
       buckets: []
     };
 
+  }
+
+  onNewBucketFormSubmit(e){
+    e.preventDefault();
+    let {state} = this;
+    state.newBucket.formClass = 'working';
+    state.newBucket.isLoading = true;
+    this.setState(state);
+    const {name, description} = this.state.newBucket;
+    
+    xhr.post('/bucketlists', {name: name.trim(), description:description.trim()})
+    .then(response => {
+      const bucket = response.data;
+      state.buckets = [bucket, ...state.buckets];
+      state.newBucket.name = '';
+      state.newBucket.description = '';
+      state.newBucket.formClass = 'succeeded';
+      state.newBucket.isLoading = false;
+      this.setState(state);
+    })
+    .catch(() => {
+      state.newBucket.formClass = 'failed';
+      state.newBucket.isLoading = false;
+      this.setState(state);
+    });
+    
   }
 
   componentDidMount(){
@@ -49,10 +93,19 @@ class App extends Component {
       this.setState({buckets: request.data});
       this.loadBucket(request.data[0].id);
     })
-    .catch(error => {
-      // window.location = '/';
-      console.log(error);
+    .catch(() => {
+      
     });
+  }
+
+  onNewBucketChange(e){
+    let {state} = this;
+    state.newBucket[e.target.name] = e.target.value;
+    this.setState(state);
+  }
+
+  onNewItemChange(e){
+
   }
 
   loadBucket(id){
@@ -60,9 +113,8 @@ class App extends Component {
     .then(request => {
       this.setState({currentBucket: request.data});
     })
-    .catch(error => {
+    .catch(() => {
       // window.location = '/';
-      console.log(error);
     });
   }
 
@@ -76,6 +128,29 @@ class App extends Component {
     items[index].is_complete = !items[index].is_complete;
     state.currentBucket = currentBucket;
     this.setState(state);
+  }
+
+  stopPropagation(e){
+    e.stopPropagation();
+  }
+
+  toggleBucketForm(e){
+    e.preventDefault();
+    let {state} = this;
+    state.newBucket.formClass = '';
+    this.setState(state)
+    $('body').toggleClass('add-bucket');
+  }
+
+  toggleItemForm(e){
+    e.preventDefault();
+    $('body').toggleClass('add-item');
+  }
+
+  hideForms(e){
+    e.preventDefault();
+    $('body').removeClass('add-bucket');
+    $('body').removeClass('add-item');
   }
 
   onItemBucketClick(id){
@@ -135,7 +210,7 @@ class App extends Component {
                   <div className="right">
                     <ul id="context-actions">
                       <li>
-                        <a href="" title="Add a new item">
+                        <a href="" title="Add a new item" onClick={this.toggleItemForm}>
                           <i className="glyphicon glyphicon-plus"></i>
                         </a>
                       </li>
@@ -161,7 +236,7 @@ class App extends Component {
             <div id="sidebar" className="expanded">
                <div id="dashboard-menu">
                  <div id="menu-wrapper">
-                   <a className="d-menu-item">
+                  <a className="d-menu-item">
                     <div className="menu-icon">
                       <i className="glyphicon glyphicon-user"></i>
                     </div>
@@ -170,12 +245,21 @@ class App extends Component {
                     </div>
                     <div className="clearfix"></div>
                   </a>
-                    <a className="d-menu-item current">
+                  <a onClick={this.toggleBucketForm} className="d-menu-item">
+                    <div className="menu-icon">
+                      <i className="glyphicon glyphicon-plus"></i>
+                    </div>
+                    <div id="user-details" className="menu-text">
+                      <span className="ellipsable">Add a new bucket</span>
+                    </div>
+                    <div className="clearfix"></div>
+                  </a>
+                  <a className="d-menu-item current">
                     <div className="menu-icon">
                       <img src={bucketIconLight} alt="Bucket icon"/>
                     </div>
                     <div id="user-details" className="menu-text">
-                      <span className="ellipsable">Buckets</span>
+                      <span className="ellipsable">My buckets</span>
                     </div>
                     <div className="clearfix"></div>
                   </a>
@@ -219,6 +303,125 @@ class App extends Component {
                 </div>
               </div>
             </main>
+        </div>
+        <div id="overlay" onClick={this.hideForms}>
+          <div id="add-bucket" className="overlay-content" onClick={this.stopPropagation}>
+            <form onSubmit={this.onNewBucketFormSubmit} 
+              className={this.state.newBucket.formClass}>
+              <div className="overlay-header">
+                <span className="o-title">Create a new bucket</span>
+              </div>
+              <div className="overlay-body">
+                <div className="form-group">
+                  <input name="name" 
+                  onChange={this.onNewBucketChange} 
+                  value={this.state.newBucket.name} 
+                  type="text" 
+                  className="form-control" 
+                  placeholder="Name"
+                  required />
+                </div>
+                <div className="form-group">
+                  <textarea name="description" 
+                  onChange={this.onNewBucketChange} 
+                  value={this.state.newBucket.description} 
+                  placeholder="Description" 
+                  rows="4" 
+                  className="form-control"
+                  required></textarea>
+                </div>
+                <div className="form-group buttons">
+                  <div className="right">
+                    <div className="form-feedback positive">
+                      <span className="feedback-icon">
+                        <i className="glyphicon glyphicon-ok"></i>
+                      </span>
+                      <span className="feedback-message">
+                        Created a new bucket.
+                      </span>
+                    </div>
+                    <div className="form-feedback negative">
+                      <span className="feedback-icon">
+                        <i className="glyphicon glyphicon-remove"></i>
+                      </span>
+                      <span className="feedback-message">
+                        Something went wrong.
+                      </span>
+                    </div>
+                    <div className="form-feedback processing">
+                      <span className="feedback-icon loading"></span>
+                      <span className="feedback-message">Processing...</span>
+                    </div>
+                    <button className="btn btn-primary" disabled={this.state.newBucket.isLoading}>Done</button>
+                    <button onClick={this.toggleBucketForm} className="btn btn-default">Close</button>
+                  </div>
+                  <div className="clearfix"></div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div id="add-item" className="overlay-content" onClick={this.stopPropagation}>
+            <form onSubmit={this.onNewBucketFormSubmit} 
+              className={this.state.newItem.formClass}>
+              <div className="overlay-header">
+                <span className="o-title">Add a new goal to - {this.state.currentBucket.name}</span>
+              </div>
+              <div className="overlay-body">
+                <div className="form-group">
+                  <input onChange={this.onNewItemChange} 
+                    value={this.state.newItem.title}
+                    name="title" 
+                    type="text" 
+                    className="form-control" 
+                    placeholder="Title" />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="">Target date</label>
+                  <input onChange={this.onNewItemChange} 
+                    value={this.state.newItem.dueDate}
+                    name="dueDate" 
+                    type="date" 
+                    className="form-control" 
+                    placeholder="Title" />
+                </div>
+                <div className="form-group">
+                  <textarea onChange={this.onNewItemChange} 
+                    value={this.state.newItem.description}
+                    name="description" 
+                    placeholder="Description" 
+                    rows="4" type="text" 
+                    className="form-control"></textarea>
+                </div>
+                <div className="form-group buttons">
+                  <div className="right">
+                    <div className="form-feedback positive">
+                      <span className="feedback-icon">
+                        <i className="glyphicon glyphicon-ok"></i>
+                      </span>
+                      <span className="feedback-message">
+                        Added a item this bucket ({this.state.currentBucket.name}).
+                      </span>
+                    </div>
+                    <div className="form-feedback negative">
+                      <span className="feedback-icon">
+                        <i className="glyphicon glyphicon-remove"></i>
+                      </span>
+                      <span className="feedback-message">
+                        Something went wrong.
+                      </span>
+                    </div>
+                    <div className="form-feedback processing">
+                      <span className="feedback-icon loading"></span>
+                      <span className="feedback-message">Processing...</span>
+                    </div>
+                    <button className="btn btn-primary">Done</button>
+                    <button onClick={this.toggleItemForm} className="btn btn-default">Close</button>
+                  </div>
+                  <div className="clearfix"></div>
+                </div>
+              </div>
+            </form>
+          </div>
         </div>
     </div>
     );
