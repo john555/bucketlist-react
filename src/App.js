@@ -493,7 +493,7 @@ class App extends Component {
                         <span className="feedback-icon loading"></span>
                         <span className="feedback-message">Processing...</span>
                       </div>
-                      <button className="btn btn-primary" disabled={this.state.newBucket.isLoading}>Done</button>
+                      <button className="btn btn-primary" disabled={this.state.newBucket.isLoading}>Create</button>
                       <button onClick={this.toggleBucketForm} className="btn btn-default">Close</button>
                     </div>
                     <div className="clearfix"></div>
@@ -558,7 +558,7 @@ class App extends Component {
                         <span className="feedback-icon loading"></span>
                         <span className="feedback-message">Processing...</span>
                       </div>
-                      <button className="btn btn-primary" disabled={this.state.newItem.isLoading}>Done</button>
+                      <button className="btn btn-primary" disabled={this.state.newItem.isLoading}>Add</button>
                       <button onClick={this.toggleItemForm} className="btn btn-default">Close</button>
                     </div>
                     <div className="clearfix"></div>
