@@ -326,6 +326,15 @@ main{
     }
 }
 
+#overlay-inner{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+}
+
 .overlay-content{
     position: absolute;
     left: 0;
@@ -367,15 +376,28 @@ span.o-title{
 
 .add-bucket #add-bucket{
     transform: translateY(0);
+    display: block;
+}
+
+.add-bucket #add-item{
+    display: none;
 }
 
 .add-item #add-item{
     transform: translate(0);
+    display: block;
+}
+
+.add-item #add-bucket{
+    display: none;
 }
 
 .add-bucket #overlay::before,
 .add-item #overlay::before{
     opacity: 1;
+}
+body.add-bucket, body.add-item{
+    overflow: hidden;
 }
 .add-bucket #overlay,
 .add-item #overlay{
