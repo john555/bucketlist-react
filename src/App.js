@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Cookie from './Cookie';
 import axios from 'axios';
 import BucketList from './components/BucketList.js';
 import BucketItem from './components/BucketItem.js';
@@ -7,10 +8,10 @@ import logo from './images/logo.svg'
 import bucketIconLight from './images/bucket-light.svg';
 import $ from 'jquery';
 
-let auth = JSON.parse(localStorage.getItem('auth'));
+let token = Cookie.getCookie('token');
 
 const xhr = axios.create({
-    headers: {'X-Token': auth.token},
+    headers: {'X-Token': token},
     baseURL: Config.API_BASE_URL
 });
 
@@ -19,6 +20,10 @@ class App extends Component {
   constructor(){
     super();
     this.bindEvents();
+
+    if (!token || token === "") {
+      window.location = '/';
+    }
   }
 
   bindEvents(){
@@ -406,7 +411,7 @@ class App extends Component {
             </div>
             <div className="left">
               <div className="left pagelet-title-wrapper ellipsable">
-                <span className="pagelet-title ellipsable">{this.state.currentBucket.name} – {this.state.currentBucket.description}</span>
+                <span className={"pagelet-title ellipsable " + ((this.state.currentBucket.id) ? '':'hidden')}>{this.state.currentBucket.name} – {this.state.currentBucket.description}</span>
               </div>
             </div>
             <div className="right">

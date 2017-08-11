@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import xhr from './Request';
+import Cookie from '../Cookie';
 import '../css/anonymous.min.css';
 import logo from '../images/logo-colored.svg';
 
@@ -34,10 +35,10 @@ class Login extends Component{
         .then(function(response){
             let {data} = response;
             localStorage.setItem('auth', JSON.stringify(data));
+            Cookie.setCookie('token', data.token, 8);
             window.location = '/u';
         })
         .catch(function(error){
-            console.log(error);
             self.setState({isLoading: false});
         });
 
