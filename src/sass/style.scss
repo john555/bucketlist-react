@@ -141,7 +141,6 @@ main{
 #dashboard-menu{
     width: 68px;
     color: white;
-    overflow: hidden;
     padding: 25px 0;
 }
 
@@ -378,7 +377,18 @@ span.o-title{
     display: block;
 }
 
-.add-bucket #add-item{
+.add-bucket #add-item,
+.add-bucket #edit-bucket{
+    display: none;
+}
+
+.edit-bucket #edit-bucket{
+    transform: translate(0);
+    display: block;
+}
+
+.edit-bucket #add-bucket,
+.edit-bucket #add-item{
     display: none;
 }
 
@@ -387,15 +397,17 @@ span.o-title{
     display: block;
 }
 
-.add-item #add-bucket{
+.add-item #add-bucket,
+.add-bucket #edit-bucket{
     display: none;
 }
 
+.edit-bucket #overlay::before,
 .add-bucket #overlay::before,
 .add-item #overlay::before{
     opacity: 1;
 }
-body.add-bucket, body.add-item{
+body.add-bucket, body.add-item, body.edit-bucket{
     overflow: hidden;
 }
 
@@ -405,7 +417,8 @@ body.add-item #overlay-inner{
 }
 
 .add-bucket #overlay,
-.add-item #overlay{
+.add-item #overlay,
+.edit-bucket #overlay{
     pointer-events: all;
 }
 

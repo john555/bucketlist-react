@@ -50,6 +50,12 @@ class App extends Component {
         formClass : '',
         description: ''
       },
+      editBucket:{
+        name: '',
+        isLoading: false,
+        formClass : '',
+        description: ''
+      },
       currentBucket: {},
       buckets: []
     };
@@ -180,6 +186,12 @@ class App extends Component {
     this.setState(state);
   }
 
+  onEditBucketChange(e){
+    let {state} = this;
+    state.editBucket[e.target.name] = e.target.value;
+    this.setState(state);
+  }
+
   onNewItemChange(e){
     let {state} = this;
     state.newItem[e.target.name] = e.target.value;
@@ -189,7 +201,11 @@ class App extends Component {
   loadBucket(id){
     xhr.get('/bucketlists/' + id)
     .then(request => {
-      this.setState({currentBucket: request.data});
+      let {state} = this;
+      state.currentBucket = request.data;
+      state.editBucket.name = request.data.name;
+      state.editBucket.description = request.data.description;
+      this.setState(state);
     })
     .catch(() => {
       // handle error appropriately
@@ -229,6 +245,14 @@ class App extends Component {
     $('body').toggleClass('add-bucket');
   }
 
+  toggleEditBucketForm(e){
+    e.preventDefault();
+    let {state} = this;
+    state.editBucket.formClass = '';
+    this.setState(state)
+    $('body').toggleClass('edit-bucket');
+  }
+
   toggleItemForm(e){
     e.preventDefault();
     if (!this.state.currentBucket.id){
@@ -244,6 +268,7 @@ class App extends Component {
   hideForms(e){
     e.preventDefault();
     $('body').removeClass('add-bucket');
+    $('body').removeClass('edit-bucket');
     $('body').removeClass('add-item');
   }
 
@@ -256,13 +281,40 @@ class App extends Component {
     this.loadBucket(id);
   }
 
-  onBucketEditClick(e){
+  onEditBucketFormSubmit(e){
     e.preventDefault();
     if (!this.state.currentBucket.id){
       return;
     }
 
+    let {state} = this;
+    state.newItem.formClass = 'working';
+    state.newItem.isLoading = true;
+    this.setState(state);
+
+    let {name, description} = this.state.editBucket;
     
+    xhr.put('/bucketlists/' + this.state.currentBucket.id, {name: name.trim(), description: description.trim()})
+    .then(request => {
+      state.currentBucket = request.data;
+      state.editBucket.name = request.data.name;
+      state.editBucket.description = request.data.description;
+      state.editBucket.formClass = 'succeeded';
+      state.editBucket.isLoading = false;
+
+      let index = state.buckets.findIndex(bucket => bucket.id === request.data.id);
+
+      state.buckets[index].name = request.data.name;
+      state.buckets[index].description = request.data.description;
+
+      this.setState(state);
+    })
+    .catch(() => {
+      // handle error appropriately
+      state.newItem.formClass = 'failed';
+      state.newItem.isLoading = false;
+      this.setState(state);
+    });
   }
 
   onBucketDeleteClick(e){
@@ -354,13 +406,13 @@ class App extends Component {
             </div>
             <div className="left">
               <div className="left pagelet-title-wrapper ellipsable">
-                <span className="pagelet-title">{this.state.currentBucket.name}</span>
+                <span className="pagelet-title ellipsable">{this.state.currentBucket.name} – {this.state.currentBucket.description}</span>
               </div>
             </div>
             <div className="right">
               <header id="content-header">
                   
-                  <div className={"right "+((this.state.currentBucket.id) ? '':'hidden')}>
+                  <div className={"right " + ((this.state.currentBucket.id) ? '':'hidden')}>
                     <ul id="context-actions">
                       <li>
                         <a href="" title="Add a new item" onClick={this.toggleItemForm.bind(this)}>
@@ -368,7 +420,7 @@ class App extends Component {
                         </a>
                       </li>
                       <li>
-                        <a href="" title="Edit bucket" onClick={this.onBucketEditClick.bind(this)}>
+                        <a href="" title="Edit bucket" onClick={this.toggleEditBucketForm.bind(this)}>
                           <i className="glyphicon glyphicon-pencil"></i>
                         </a>
                       </li>
@@ -453,6 +505,7 @@ class App extends Component {
                   <div id="bucket-items" className="left">
                     {items}
                   </div>
+                  <div className="clearfix"></div>
                 </div>
               </div>
             </main>
@@ -508,6 +561,61 @@ class App extends Component {
                       </div>
                       <button className="btn btn-primary" disabled={this.state.newBucket.isLoading}>Create</button>
                       <button onClick={this.toggleBucketForm} className="btn btn-default">Close</button>
+                    </div>
+                    <div className="clearfix"></div>
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div id="edit-bucket" className="overlay-content" onClick={this.stopPropagation}>
+              <form onSubmit={this.onEditBucketFormSubmit.bind(this)} 
+                className={this.state.editBucket.formClass}>
+                <div className="overlay-header">
+                  <span className="o-title">Editing – {this.state.currentBucket.name}</span>
+                </div>
+                <div className="overlay-body">
+                  <div className="form-group">
+                    <input name="name" 
+                    onChange={this.onEditBucketChange.bind(this)}
+                    value={this.state.editBucket.name}
+                    type="text" 
+                    className="form-control" 
+                    placeholder="Name"
+                    required />
+                  </div>
+                  <div className="form-group">
+                    <textarea name="description" 
+                    onChange={this.onEditBucketChange.bind(this)}
+                    value={this.state.editBucket.description} 
+                    placeholder="Description" 
+                    rows="4" 
+                    className="form-control"
+                    required></textarea>
+                  </div>
+                  <div className="form-group buttons">
+                    <div className="right">
+                      <div className="form-feedback positive">
+                        <span className="feedback-icon">
+                          <i className="glyphicon glyphicon-ok"></i>
+                        </span>
+                        <span className="feedback-message">
+                          Bucket was updated.
+                        </span>
+                      </div>
+                      <div className="form-feedback negative">
+                        <span className="feedback-icon">
+                          <i className="glyphicon glyphicon-remove"></i>
+                        </span>
+                        <span className="feedback-message">
+                          Something went wrong.
+                        </span>
+                      </div>
+                      <div className="form-feedback processing">
+                        <span className="feedback-icon loading"></span>
+                        <span className="feedback-message">Processing...</span>
+                      </div>
+                      <button className="btn btn-primary" disabled={this.state.editBucket.isLoading}>Save</button>
+                      <button onClick={this.toggleEditBucketForm.bind(this)} className="btn btn-default">Close</button>
                     </div>
                     <div className="clearfix"></div>
                   </div>
