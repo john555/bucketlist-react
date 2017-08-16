@@ -202,9 +202,13 @@ main{
     padding: 4px 20px;
     cursor: pointer;
 
-    &:hover, &.current{
+    &:hover:not(.list-header), &.current:not(.list-header){
         background: lighten($primaryColor, 5%);
     }
+}
+
+.list-header.list-header {
+    padding-bottom: 20px;
 }
 
 .menu-icon{

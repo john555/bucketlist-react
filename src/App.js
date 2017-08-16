@@ -10,6 +10,7 @@ import $ from 'jquery';
 
 let token = Cookie.getCookie('token');
 
+
 const xhr = axios.create({
     headers: {'X-Token': token},
     baseURL: Config.API_BASE_URL
@@ -163,6 +164,11 @@ class App extends Component {
   }
 
   componentDidMount(){
+    let {state} = this;
+    let auth = JSON.parse(localStorage.getItem('auth'));
+    state.user.firstName = auth.user.first_name;
+    state.user.lastName = auth.user.last_name;
+    this.setState(state);
     this.loadBuckets();
   }
 
@@ -446,12 +452,12 @@ class App extends Component {
             <div id="sidebar" className="expanded">
                <div id="dashboard-menu">
                  <div id="menu-wrapper">
-                  <a className="d-menu-item">
+                  <a className="d-menu-item list-header">
                     <div className="menu-icon">
                       <i className="glyphicon glyphicon-user"></i>
                     </div>
                     <div id="user-details" className="menu-text">
-                      <span className="ellipsable">John doe</span>
+                      <span className="ellipsable">{this.state.user.firstName} {this.state.user.lastName}</span>
                     </div>
                     <div className="clearfix"></div>
                   </a>
