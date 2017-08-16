@@ -276,6 +276,22 @@ class App extends Component {
     $('body').toggleClass('add-item');
   }
 
+  togglePasswordResetForm(e){
+
+  }
+
+  logout(){
+    xhr.post('/auth/logout')
+    .then(() => {
+      Cookie.setCookie('token', '', -20);
+      localStorage.removeItem('auth');
+      window.location = '/login';
+    })
+    .catch(() => {
+      // handle error ppropriately
+    });
+  }
+
   hideForms(e){
     e.preventDefault();
     $('body').removeClass('add-bucket');
@@ -452,7 +468,7 @@ class App extends Component {
             <div id="sidebar" className="expanded">
                <div id="dashboard-menu">
                  <div id="menu-wrapper">
-                  <a className="d-menu-item list-header">
+                  <div className="d-menu-item list-header">
                     <div className="menu-icon">
                       <i className="glyphicon glyphicon-user"></i>
                     </div>
@@ -460,7 +476,7 @@ class App extends Component {
                       <span className="ellipsable">{this.state.user.firstName} {this.state.user.lastName}</span>
                     </div>
                     <div className="clearfix"></div>
-                  </a>
+                  </div>
                   <a onClick={this.toggleBucketForm} className="d-menu-item">
                     <div className="menu-icon">
                       <i className="glyphicon glyphicon-plus"></i>
@@ -476,6 +492,24 @@ class App extends Component {
                     </div>
                     <div id="user-details" className="menu-text">
                       <span className="ellipsable">My buckets</span>
+                    </div>
+                    <div className="clearfix"></div>
+                  </a>
+                   <a onClick={this.togglePasswordResetForm} className="d-menu-item">
+                    <div className="menu-icon">
+                      <i className="glyphicon glyphicon-cog"></i>
+                    </div>
+                    <div id="user-details" className="menu-text">
+                      <span className="ellipsable">Reset password</span>
+                    </div>
+                    <div className="clearfix"></div>
+                  </a>
+                   <a onClick={this.logout.bind(this)} className="d-menu-item">
+                    <div className="menu-icon">
+                      <i className="glyphicon glyphicon-off"></i>
+                    </div>
+                    <div id="user-details" className="menu-text">
+                      <span className="ellipsable">Logout</span>
                     </div>
                     <div className="clearfix"></div>
                   </a>
