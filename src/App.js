@@ -63,7 +63,14 @@ class App extends Component {
         description: ''
       },
       currentBucket: {},
-      buckets: []
+      buckets: [],
+      resetPassword: {
+        oldPassword: '',
+        newPasswordRepeat: '',
+        newPassword: '',
+        isLoading: false,
+        formClass : ''
+      }
     };
 
   }
@@ -277,7 +284,8 @@ class App extends Component {
   }
 
   togglePasswordResetForm(e){
-
+    e.preventDefault();
+    $('body').toggleClass('password-reset');
   }
 
   logout(){
@@ -297,6 +305,7 @@ class App extends Component {
     $('body').removeClass('add-bucket');
     $('body').removeClass('edit-bucket');
     $('body').removeClass('add-item');
+    $('body').removeClass('password-reset');
   }
 
   onBucketItemClick(id){
@@ -375,6 +384,11 @@ class App extends Component {
     }
   }
 
+  onPasswordResetChange(e){
+    let {state} = this;
+    this.state.resetPassword[e.target.name] = e.target.value;
+  }
+
   // displays goals in the current bucket
   renderItems(){
     let {items} = this.state.currentBucket;
@@ -416,6 +430,34 @@ class App extends Component {
           onItemEdit={this.onItemEdit.bind(this)}
           onItemDelete={this.onItemDelete} />
       );
+    });
+  }
+
+  resetPassword(e){
+    e.preventDefault();
+    let {state} = this;
+    state.resetPassword.formClass = 'working';
+    state.resetPassword.isLoading = true;
+    this.setState(state);
+    let {oldPassword, newPassword, newPasswordRepeat} = this.state.resetPassword;
+    if (newPasswordRepeat !== newPassword){
+      // console.log("Password missmatch!");
+      return;
+    }
+
+    xhr.post('/auth/reset-password', {
+      new_password: newPassword,
+      old_password: oldPassword
+    })
+    .then(response => {
+      state.resetPassword.formClass = 'succeeded';
+      state.resetPassword.isLoading = false;
+      this.setState(state);
+    })
+    .catch(error => {
+      state.resetPassword.formClass = 'failed';
+      state.resetPassword.isLoading = false;
+      this.setState(state);
     });
   }
 
@@ -726,6 +768,70 @@ class App extends Component {
                       </div>
                       <button className="btn btn-primary" disabled={this.state.newItem.isLoading}>Add</button>
                       <button onClick={this.toggleItemForm.bind(this)} className="btn btn-default">Close</button>
+                    </div>
+                    <div className="clearfix"></div>
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div id="password-reset" className="overlay-content" onClick={this.stopPropagation}>
+              <form onSubmit={this.resetPassword.bind(this)} 
+                className={this.state.resetPassword.formClass}>
+                <div className="overlay-header">
+                  <span className="o-title">Reset password</span>
+                </div>
+                <div className="overlay-body">
+                  <div className="form-group">
+                    <input onChange={this.onPasswordResetChange.bind(this)} 
+                      value={this.state.resetPassword.oldPasword}
+                      name="oldPassword" 
+                      type="password" 
+                      className="form-control" 
+                      placeholder="Old password"
+                      required />
+                  </div>
+                  <div className="form-group">
+                    <input onChange={this.onPasswordResetChange.bind(this)} 
+                      value={this.state.resetPassword.newPasword}
+                      name="newPassword" 
+                      type="password" 
+                      className="form-control" 
+                      placeholder="New password"
+                      required />
+                  </div>
+                  <div className="form-group">
+                    <input onChange={this.onPasswordResetChange.bind(this)} 
+                      value={this.state.resetPassword.newPaswordRepeat}
+                      name="newPasswordRepeat" 
+                      type="password" 
+                      className="form-control" 
+                      placeholder="Repeat new password"
+                      required />
+                  </div>
+                  <div className="form-group buttons">
+                    <div className="right">
+                      <div className="form-feedback positive">
+                        <span className="feedback-icon">
+                          <i className="glyphicon glyphicon-ok"></i>
+                        </span>
+                        <span className="feedback-message">
+                          Password was reset.
+                        </span>
+                      </div>
+                      <div className="form-feedback negative">
+                        <span className="feedback-icon">
+                          <i className="glyphicon glyphicon-remove"></i>
+                        </span>
+                        <span className="feedback-message">
+                          Something went wrong.
+                        </span>
+                      </div>
+                      <div className="form-feedback processing">
+                        <span className="feedback-icon loading"></span>
+                        <span className="feedback-message">Processing...</span>
+                      </div>
+                      <button className="btn btn-primary" disabled={this.state.resetPassword.isLoading}>Reset password</button>
+                      <button onClick={this.togglePasswordResetForm.bind(this)} className="btn btn-default">Close</button>
                     </div>
                     <div className="clearfix"></div>
                   </div>

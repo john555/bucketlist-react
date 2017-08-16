@@ -403,16 +403,27 @@ span.o-title{
 }
 
 .add-item #add-bucket,
-.add-item #edit-bucket{
+.add-item #edit-bucket,
+.password-reset #password-reset{
     display: none;
 }
 
+
+.password-reset #password-reset{
+    transform: translate(0);
+    display: block;
+}
+
+.password-reset #overlay::before,
 .edit-bucket #overlay::before,
 .add-bucket #overlay::before,
 .add-item #overlay::before{
     opacity: 1;
 }
-body.add-bucket, body.add-item, body.edit-bucket{
+body.add-bucket, 
+body.add-item, 
+body.edit-bucket
+body.password-reset{
     overflow: hidden;
 }
 
@@ -423,7 +434,8 @@ body.add-item #overlay-inner{
 
 .add-bucket #overlay,
 .add-item #overlay,
-.edit-bucket #overlay{
+.edit-bucket #overlay,
+.password-reset #overlay{
     pointer-events: all;
 }
 
