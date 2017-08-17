@@ -28,7 +28,8 @@ describe("App", () => {
   });
 
   it("Can add edit a bucket", () => {
-    
+    const app = mount(<App />);
+    console.log(app.state());
 
   });
 
