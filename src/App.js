@@ -486,7 +486,7 @@ class App extends Component {
         <div id="top-bar">
           <div className="header-container">
             <div className="left">
-              <Link to="/" id="logo">
+              <Link to="/u" id="logo">
                 <img src={logo} alt="Logo"/>
               </Link>
             </div>
