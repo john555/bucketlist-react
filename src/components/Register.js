@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
+import {Link} from 'react-router-dom';
 import xhr from './Request';
 import '../css/anonymous.min.css';
 import logo from '../images/logo-colored.svg';
+import $ from 'jquery';
 
 class Register extends Component{
 
@@ -18,17 +20,23 @@ class Register extends Component{
 
         this.onSubmit = this.onSubmit.bind(this);
         this.onChange = this.onChange.bind(this);
-        
+        this.tid = 0; // setTimeout() id
     }
 
     onChange(e){
-        this.setState({[e.target.name]:e.target.value});
+        let {state} = this;
+        state[e.target.name] = e.target.value;
+        this.setState(state);
     }
     
     onSubmit(e){
         e.preventDefault();
-        this.setState({isLoading:true});
+        let self = this;
+        let {state} = self;
+        state.isLoading = true;
+        this.setState(state);
         const {firstName, lastName, username, email, password} = this.state;
+        clearTimeout(self.tid);
         
         const formData = {
             email: email.trim(),
@@ -37,23 +45,49 @@ class Register extends Component{
             password: password.trim(),
             username: username.trim()
         }
-
-        
         xhr.post('/auth/register', formData)
         .then(()=> {
+            state.isLoading = false;
+            this.setState(state);
             window.location = '/';
         })
-        .catch( error => {
+        .catch(error => {
+            if (error.request.status === 0){
+                $("#dialog.error").text("You are offline. Connect to the internet and try again.").fadeIn();
+            }
+
+            if (error.response && error.response.status === 409){
+                let text = 'The username you provided already exists. Please choose another one.';
+                if (error.response.data.parameter === 'email'){
+                    text = 'The email you provided already exists. Please choose another one.';
+                }
+                $("#dialog.error").text(text).fadeIn();
+            }
+
+            if (error.response && error.response.status === 400){
+                $("#dialog.error").text(error.response.data.message).fadeIn();
+            }
+
+            state.isLoading = false;
+            this.setState(state);
+
+            self.tid = setTimeout(() => {
+                $("#dialog.error").fadeOut();
+            }, 10000);
         });
     }
 
     render(){
+        let buttonText = 'Register';
+        if (this.state.isLoading){
+            buttonText = 'Registering...';
+        }
         return (
             <div id="anonymouscontent" className="flex-center">
                 <header id="header-anonymous">
-                    <a href="/" className="logo">
+                    <Link to="/" className="logo">
                         <img src={logo} alt="Logo" />
-                    </a>
+                    </Link>
                 </header>
                 <div id="entry-form-content">
                     <span className="form-heading">Create an account.</span>
@@ -74,14 +108,14 @@ class Register extends Component{
                             <input name="password" onChange={this.onChange} className="form-control input-lg" type="password" required placeholder="Password" value={this.state.password} />
                         </div>
                         <div className="form-group">
-                            <button type="submit" className="btn btn-primary input-lg" disabled={this.state.isLoading}>Register</button>
+                            <button type="submit" className="btn btn-primary input-lg" disabled={this.state.isLoading}>{buttonText}</button>
                             <div className="clearfix"></div>
                         </div>
                     </form>
 
                     <div className="copy">
                         <p>
-                            <a href="/">Sign in</a> if you already have an account.
+                            <Link to="/">Sign in</Link> if you already have an account.
                         </p>
                     </div>
                 </div>

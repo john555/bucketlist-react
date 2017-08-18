@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
+import {Link, Redirect} from 'react-router-dom';
 import xhr from './Request';
-import Cookie from '../Cookie';
 import '../css/anonymous.min.css';
 import logo from '../images/logo-colored.svg';
+import $ from 'jquery';
 
 class Login extends Component{
     constructor() {
@@ -11,46 +12,86 @@ class Login extends Component{
         this.state = {
             username: '',
             password: '',
-            isLoading: false
+            errorMessage: '',
+            isLoading: false,
+            isLoggedIn: false
         }
 
         this.onChange = this.onChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
     }
 
+    onComponentDidMount(){
+        let auth = JSON.parse(localStorage.getItem('auth'));
+        if (auth && auth.token){
+            let {state} = this;
+            state.isLoggedIn = true;
+            this.setState(state);
+        }
+    }
+
     onChange(e){
-        this.setState({[e.target.name]: e.target.value})
+        let {state} = this;
+        state[e.target.name] = e.target.value;
+        this.setState(state);
     }
 
     onSubmit(e){
         e.preventDefault();
         const self = this;
-        let {username, password} = this.state;
-        this.setState({isLoading: true});
+        let {state} = this;
+        let {username, password} = state;
+        state.isLoading = true;
+        this.setState(state);
 
-        xhr.post('/auth/login', {
+        return xhr.post('/auth/login', {
             username: username.trim(),
             password: password.trim()
         })
         .then(function(response){
             let {data} = response;
             localStorage.setItem('auth', JSON.stringify(data));
-            Cookie.setCookie('token', data.token, 8);
-            window.location = '/u';
+            state.isLoggedIn = true;
+            self.setState(state);
+            $("#dialog.error").hide();
         })
-        .catch(function(error){
-            self.setState({isLoading: false});
+        .catch(error => {
+            state.isLoading = false;
+            self.setState(state);
+
+            if (error.request.status === 0){
+                $("#dialog.error").text("You are offline. Connect to the internet and try again.").fadeIn();
+            }
+
+            if (error.response && error.response.status === 401){
+                $("#dialog.error").text("Invalid login credentials.").fadeIn();
+            }
+
+            setTimeout(() => {
+                $("#dialog.error").fadeOut();
+            }, 10000);
         });
 
     }
 
     render(){
+        
+        if (this.state.isLoggedIn){
+            return <Redirect to="/u" />
+        }
+
+        let buttonText = 'Sign in';
+
+        if (this.state.isLoading) {
+            buttonText = 'Signing in...';
+        }
+
         return (
             <div id="anonymouscontent" className="flex-center">
                 <header id="header-anonymous">
-                    <a href="/" className="logo">
+                    <Link to="/" className="logo">
                         <img src={logo} alt="Logo" />
-                    </a>
+                    </Link>
                 </header>
                 <div id="entry-form-content">
                     <span className="form-heading">Sign in to your account.</span>
@@ -63,14 +104,14 @@ class Login extends Component{
                         </div>
 
                         <div className="form-group">
-                            <button className="btn btn-primary input-lg" disabled={this.state.isLoading}>Sign in</button>
+                            <button className="btn btn-primary input-lg" disabled={this.state.isLoading}>{buttonText}</button>
                             <div className="clearfix"></div>
                         </div>
                     </form>
 
                     <div className="copy">
                         <p>
-                            <a href="/register">Create an account</a> if you have none.
+                            <Link to="/register">Create an account</Link> if you have none.
                         </p>
                     </div>
                 </div>

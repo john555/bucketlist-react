@@ -45,3 +45,21 @@ a.logo img{
 .input-lg {
     width: 100%;
 }
+
+#dialog{
+    position: fixed;
+    z-index: 2000;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 12px 0;
+    background: #eee;
+    text-align: center;
+    font-size: 18px;
+    display: none;
+}
+
+#dialog.error{
+    background-color:#ee6e73;
+    color: white;
+}

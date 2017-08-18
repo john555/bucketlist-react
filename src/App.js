@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import Cookie from './Cookie';
+import {Redirect} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import axios from 'axios';
 import BucketList from './components/BucketList.js';
 import BucketItem from './components/BucketItem.js';
@@ -8,22 +9,22 @@ import logo from './images/logo.svg'
 import bucketIconLight from './images/bucket-light.svg';
 import $ from 'jquery';
 
-let token = Cookie.getCookie('token');
-
-
-const xhr = axios.create({
-    headers: {'X-Token': token},
-    baseURL: Config.API_BASE_URL
-});
-
 class App extends Component {
   
   constructor(){
     super();
     this.bindEvents();
-
-    if (!token || token === "") {
-      window.location = '/';
+    this.auth = JSON.parse(localStorage.getItem('auth'));
+    
+    this.xhr = axios.create({
+      baseURL: Config.API_BASE_URL
+    });
+    
+    if (this.auth && this.auth.token){
+      this.xhr = axios.create({
+          headers: {'X-Token': this.auth.token},
+          baseURL: Config.API_BASE_URL
+      });
     }
   }
 
@@ -42,7 +43,7 @@ class App extends Component {
   componentWillMount(){
     
     this.state = {
-      user: {},
+      redirectToLogin: false,
       newItem: {
         title: '',
         isLoading: false,
@@ -83,7 +84,7 @@ class App extends Component {
     this.setState(state);
     const {name, description} = this.state.newBucket;
     
-    xhr.post('/bucketlists', {name: name.trim(), description:description.trim()})
+    this.xhr.post('/bucketlists', {name: name.trim(), description:description.trim()})
     .then(response => {
       const bucket = response.data;
       state.buckets = [bucket, ...state.buckets];
@@ -117,7 +118,7 @@ class App extends Component {
     this.setState(state);
     const {title, dueDate, description} = this.state.newItem;
 
-    xhr.post(`/bucketlists/${this.state.currentBucket.id}/items`, {
+    this.xhr.post(`/bucketlists/${this.state.currentBucket.id}/items`, {
       title: title.trim(),
       due_date: dueDate.trim(),
       description: description.trim()
@@ -141,7 +142,7 @@ class App extends Component {
 
   onItemDelete(id){
     
-    xhr.delete(`/bucketlists/${this.state.currentBucket.id}/items/${id}`)
+    this.xhr.delete(`/bucketlists/${this.state.currentBucket.id}/items/${id}`)
     .then(() => {
       let {state} = this;
       let index = state.currentBucket.items.findIndex(item => item.id === id);
@@ -154,7 +155,7 @@ class App extends Component {
   }
 
   onItemEdit(id, data){
-    return xhr.put(`/bucketlists/${this.state.currentBucket.id}/items/${id}`, data)
+    return this.xhr.put(`/bucketlists/${this.state.currentBucket.id}/items/${id}`, data)
     .then(response => {
       let newItem = response.data;
       let {state} = this;
@@ -171,11 +172,6 @@ class App extends Component {
   }
 
   componentDidMount(){
-    let {state} = this;
-    let auth = JSON.parse(localStorage.getItem('auth'));
-    state.user.firstName = auth.user.first_name;
-    state.user.lastName = auth.user.last_name;
-    this.setState(state);
     this.loadBuckets();
   }
 
@@ -188,7 +184,7 @@ class App extends Component {
   }
 
   loadBuckets(){
-    xhr.get('/bucketlists')
+    this.xhr.get('/bucketlists')
     .then(request => {
       this.setState({buckets: request.data});
       this.loadBucket(request.data[0].id);
@@ -217,7 +213,7 @@ class App extends Component {
   }
 
   loadBucket(id){
-    xhr.get('/bucketlists/' + id)
+    this.xhr.get('/bucketlists/' + id)
     .then(request => {
       let {state} = this;
       state.currentBucket = request.data;
@@ -238,7 +234,7 @@ class App extends Component {
     
     let index = items.findIndex(item => item.id === itemId);
     
-    xhr.put(`/bucketlists/${this.state.currentBucket.id}/items/${itemId}`, {
+    this.xhr.put(`/bucketlists/${this.state.currentBucket.id}/items/${itemId}`, {
       is_complete: !items[index].is_complete
     })
     .then(() => {
@@ -289,11 +285,15 @@ class App extends Component {
   }
 
   logout(){
-    xhr.post('/auth/logout')
+    let self = this;
+
+    this.xhr.post('/auth/logout')
     .then(() => {
-      Cookie.setCookie('token', '', -20);
       localStorage.removeItem('auth');
-      window.location = '/login';
+      let {state} = this;
+      state.redirectToLogin = true;
+      self.setState(state);
+      
     })
     .catch(() => {
       // handle error ppropriately
@@ -330,7 +330,7 @@ class App extends Component {
 
     let {name, description} = this.state.editBucket;
     
-    xhr.put('/bucketlists/' + this.state.currentBucket.id, {name: name.trim(), description: description.trim()})
+    this.xhr.put('/bucketlists/' + this.state.currentBucket.id, {name: name.trim(), description: description.trim()})
     .then(request => {
       state.currentBucket = request.data;
       state.editBucket.name = request.data.name;
@@ -359,7 +359,7 @@ class App extends Component {
       return;
     }
 
-    xhr.delete(`/bucketlists/${this.state.currentBucket.id}`)
+    this.xhr.delete(`/bucketlists/${this.state.currentBucket.id}`)
     .then(result => {
       this.removeBucket(result.data.id);
     })
@@ -386,7 +386,8 @@ class App extends Component {
 
   onPasswordResetChange(e){
     let {state} = this;
-    this.state.resetPassword[e.target.name] = e.target.value;
+    state.resetPassword[e.target.name] = e.target.value;
+    this.setState(state);
   }
 
   // displays goals in the current bucket
@@ -435,33 +436,49 @@ class App extends Component {
 
   resetPassword(e){
     e.preventDefault();
-    let {state} = this;
+    let self = this;
+    let {state} = self;
     state.resetPassword.formClass = 'working';
     state.resetPassword.isLoading = true;
-    this.setState(state);
+    self.setState(state);
     let {oldPassword, newPassword, newPasswordRepeat} = this.state.resetPassword;
+
     if (newPasswordRepeat !== newPassword){
       // console.log("Password missmatch!");
       return;
     }
 
-    xhr.post('/auth/reset-password', {
+    self.xhr.post('/auth/reset-password', {
       new_password: newPassword,
       old_password: oldPassword
     })
     .then(response => {
       state.resetPassword.formClass = 'succeeded';
       state.resetPassword.isLoading = false;
-      this.setState(state);
+      state.resetPassword.oldPassword = '';
+      state.resetPassword.newPassword = '';
+      state.resetPassword.newPasswordRepeat = '';
+      self.setState(state);
     })
     .catch(error => {
       state.resetPassword.formClass = 'failed';
       state.resetPassword.isLoading = false;
-      this.setState(state);
+      state.resetPassword.oldPassword = '';
+      state.resetPassword.newPassword = '';
+      state.resetPassword.newPasswordRepeat = '';
+      self.setState(state);
     });
   }
 
   render() {
+
+    if (!this.auth || !this.auth.token || this.state.redirectToLogin) {
+      return <Redirect to="/login" />;
+    }
+
+    let firstName = this.auth.user.first_name,
+    lastName = this.auth.user.last_name;
+
     let items = this.renderItems();
 
     return (
@@ -469,9 +486,9 @@ class App extends Component {
         <div id="top-bar">
           <div className="header-container">
             <div className="left">
-              <a href="/" id="logo">
+              <Link to="/" id="logo">
                 <img src={logo} alt="Logo"/>
-              </a>
+              </Link>
             </div>
             <div className="left">
               <div className="left pagelet-title-wrapper ellipsable">
@@ -515,7 +532,7 @@ class App extends Component {
                       <i className="glyphicon glyphicon-user"></i>
                     </div>
                     <div id="user-details" className="menu-text">
-                      <span className="ellipsable">{this.state.user.firstName} {this.state.user.lastName}</span>
+                      <span className="ellipsable">{firstName} {lastName}</span>
                     </div>
                     <div className="clearfix"></div>
                   </div>
