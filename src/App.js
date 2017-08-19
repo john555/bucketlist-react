@@ -145,11 +145,11 @@ class App extends Component {
       state.newItem.isLoading = false;
 
       if (error.request.status === 0){
-        $('#edit-bucket .negative .feedback-message').text('You are offline.');
+        $('#add-item .negative .feedback-message').text('You are offline.');
       }
 
       if (error.response && error.response.status === 401){
-        $('#edit-bucket .negative .feedback-message').text('You are currently not logged in.')
+        $('#add-item .negative .feedback-message').text('You are currently not logged in.')
       }
 
       this.setState(state);
