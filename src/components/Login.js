@@ -97,7 +97,7 @@ class Login extends Component{
                     <span className="form-heading">Sign in to your account.</span>
                     <form action="" id="entry-form" onSubmit={this.onSubmit}>
                         <div className="form-group">
-                            <input onChange={this.onChange} name="username" className="form-control input-lg" type="text" placeholder="Emall" required value={this.state.username} />
+                            <input onChange={this.onChange} name="username" className="form-control input-lg" type="text" placeholder="Username or emall" required value={this.state.username} />
                         </div>
                         <div className="form-group">
                             <input onChange={this.onChange} name="password" className="form-control input-lg" type="password" placeholder="Password" required value={this.state.password} />

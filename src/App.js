@@ -98,9 +98,16 @@ class App extends Component {
       }
       this.setState(state);
     })
-    .catch(() => {
+    .catch(error => {
       state.newBucket.formClass = 'failed';
       state.newBucket.isLoading = false;
+      if (error.request.status === 0){
+        $('#add-bucket .negative .feedback-message').text('You are offline.');
+      }
+
+      if (error.response && error.response.status === 400){
+        $('#add-bucket .negative .feedback-message').text('A bucket with that name already exists.')
+      }
       this.setState(state);
     });
     
@@ -133,9 +140,18 @@ class App extends Component {
       state.newItem.isLoading = false;
       this.setState(state);
     })
-    .catch(() => {
+    .catch(error => {
       state.newItem.formClass = 'failed';
       state.newItem.isLoading = false;
+
+      if (error.request.status === 0){
+        $('#edit-bucket .negative .feedback-message').text('You are offline.');
+      }
+
+      if (error.response && error.response.status === 401){
+        $('#edit-bucket .negative .feedback-message').text('You are currently not logged in.')
+      }
+
       this.setState(state);
     });
   }
@@ -324,8 +340,8 @@ class App extends Component {
     }
 
     let {state} = this;
-    state.newItem.formClass = 'working';
-    state.newItem.isLoading = true;
+    state.editBucket.formClass = 'working';
+    state.editBucket.isLoading = true;
     this.setState(state);
 
     let {name, description} = this.state.editBucket;
@@ -345,10 +361,17 @@ class App extends Component {
 
       this.setState(state);
     })
-    .catch(() => {
+    .catch(error => {
       // handle error appropriately
-      state.newItem.formClass = 'failed';
-      state.newItem.isLoading = false;
+      state.editBucket.formClass = 'failed';
+      state.editBucket.isLoading = false;
+      if (error.request.status === 0){
+        $('#edit-bucket .negative .feedback-message').text('You are offline.');
+      }
+
+      if (error.response && error.response.status === 400){
+        $('#edit-bucket .negative .feedback-message').text('A bucket with that name already exists.')
+      }
       this.setState(state);
     });
   }
@@ -444,7 +467,18 @@ class App extends Component {
     let {oldPassword, newPassword, newPasswordRepeat} = this.state.resetPassword;
 
     if (newPasswordRepeat !== newPassword){
-      // console.log("Password missmatch!");
+      $('#password-reset .negative .feedback-message').text('Password mismatch.');
+      state.resetPassword.formClass = 'failed';
+      state.resetPassword.isLoading = false;
+      self.setState(state);
+      return;
+    }
+
+    if (newPassword.length < 8){
+      $('#password-reset .negative .feedback-message').text('Password should be at least 8 characters long.');
+      state.resetPassword.formClass = 'failed';
+      state.resetPassword.isLoading = false;
+      self.setState(state);
       return;
     }
 
@@ -455,17 +489,20 @@ class App extends Component {
     .then(response => {
       state.resetPassword.formClass = 'succeeded';
       state.resetPassword.isLoading = false;
-      state.resetPassword.oldPassword = '';
-      state.resetPassword.newPassword = '';
-      state.resetPassword.newPasswordRepeat = '';
       self.setState(state);
     })
     .catch(error => {
       state.resetPassword.formClass = 'failed';
       state.resetPassword.isLoading = false;
-      state.resetPassword.oldPassword = '';
-      state.resetPassword.newPassword = '';
-      state.resetPassword.newPasswordRepeat = '';
+
+      if (error.request.status === 0){
+        $('#password-reset .negative .feedback-message').text('You are offline.');
+      }
+
+      if (error.response && error.response.status === 401){
+        $('#password-reset .negative .feedback-message').text('Invalid old password.')
+      }
+      
       self.setState(state);
     });
   }
@@ -655,9 +692,7 @@ class App extends Component {
                         <span className="feedback-icon">
                           <i className="glyphicon glyphicon-remove"></i>
                         </span>
-                        <span className="feedback-message">
-                          Something went wrong.
-                        </span>
+                        <span className="feedback-message"></span>
                       </div>
                       <div className="form-feedback processing">
                         <span className="feedback-icon loading"></span>
@@ -710,15 +745,13 @@ class App extends Component {
                         <span className="feedback-icon">
                           <i className="glyphicon glyphicon-remove"></i>
                         </span>
-                        <span className="feedback-message">
-                          Something went wrong.
-                        </span>
+                        <span className="feedback-message"></span>
                       </div>
                       <div className="form-feedback processing">
                         <span className="feedback-icon loading"></span>
                         <span className="feedback-message">Processing...</span>
                       </div>
-                      <button className="btn btn-primary" disabled={this.state.editBucket.isLoading}>Save</button>
+                      <button className="btn btn-primary" disabled={this.state.editBucket.isLoading}>{(this.state.editBucket.isLoading? 'Wait': 'Save')}</button>
                       <button onClick={this.toggleEditBucketForm.bind(this)} className="btn btn-default">Close</button>
                     </div>
                     <div className="clearfix"></div>
@@ -775,9 +808,7 @@ class App extends Component {
                         <span className="feedback-icon">
                           <i className="glyphicon glyphicon-remove"></i>
                         </span>
-                        <span className="feedback-message">
-                          Something went wrong.
-                        </span>
+                        <span className="feedback-message"></span>
                       </div>
                       <div className="form-feedback processing">
                         <span className="feedback-icon loading"></span>
@@ -839,9 +870,7 @@ class App extends Component {
                         <span className="feedback-icon">
                           <i className="glyphicon glyphicon-remove"></i>
                         </span>
-                        <span className="feedback-message">
-                          Something went wrong.
-                        </span>
+                        <span className="feedback-message"></span>
                       </div>
                       <div className="form-feedback processing">
                         <span className="feedback-icon loading"></span>
