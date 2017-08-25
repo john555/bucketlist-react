@@ -185,7 +185,7 @@ export default class App extends Component {
       $("#dialog.error").text("You are not logged in.").fadeIn();
     }
 
-    if (error.request.status === 0){
+    if (error.request && error.request.status === 0){
       $("#dialog.error").text("It seems you are offline. Connect to the internet and try again.").fadeIn();
     }
   }
@@ -205,7 +205,7 @@ export default class App extends Component {
   loadBuckets(){
     this.xhr.get('/bucketlists')
     .then(request => {
-      this.setState({buckets: request.data});
+      this.setState({buckets: request.data.buckets});
       this.loadBucket(request.data[0].id);
     })
     .catch(this.errorHandler);
@@ -233,7 +233,7 @@ export default class App extends Component {
     this.xhr.get('/bucketlists/' + id)
     .then(request => {
       let {state} = this;
-      state.currentBucket = request.data;
+      state.currentBucket = request.data.bucket;
       state.editBucket.name = request.data.name;
       state.editBucket.description = request.data.description;
       this.setState(state);

@@ -48,13 +48,13 @@ export default class Login extends Component{
             username: username.trim(),
             password: password.trim()
         })
-        .then(function(response){
+        .then(response => {
             let {data} = response;
             localStorage.setItem('auth', JSON.stringify(data));
             state.isLoggedIn = true;
             this.setState(state);
             $("#dialog.error").hide();
-        }.bind(this))
+        })
         .catch(error => {
             state.isLoading = false;
             this.setState(state);
