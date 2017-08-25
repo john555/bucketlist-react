@@ -253,7 +253,7 @@ export default class App extends Component {
       "is_complete": !items[index].is_complete
     })
     .then(() => {
-      items[index]["is_complete "] = !items[index].is_complete;
+      items[index].is_complete = !items[index].is_complete;
       state.currentBucket = currentBucket;
       this.setState(state);
     })
