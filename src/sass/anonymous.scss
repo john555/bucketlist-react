@@ -7,6 +7,10 @@
     flex-direction: column;
 }
 
+body{
+    min-height: 100vh;
+}
+
 header#header-anonymous{
     margin: 40px 0 0px;
     display: flex;

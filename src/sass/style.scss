@@ -14,7 +14,8 @@ html{
 body{
     background: $backgroundColor !important;
     color: $defaultColor;
-     font-family: "Segoe UI","Segoe WP",Tahoma,Arial,sans-serif;
+    font-family: "Segoe UI","Segoe WP",Tahoma,Arial,sans-serif;
+    // overflow: hidden;
 }
 
 .left{
@@ -135,7 +136,11 @@ main{
     display: flex;
     flex-direction: column;
     min-width: 600px;
+    height: calc(100vh - 45px);
     padding-left: 348px;
+    padding-bottom: 3em;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .sidebar-expanded main{
