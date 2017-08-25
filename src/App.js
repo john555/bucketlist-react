@@ -211,7 +211,7 @@ export default class App extends Component {
     this.xhr.get('/bucketlists')
     .then(request => {
       this.setState({buckets: request.data.buckets});
-      this.loadBucket(request.data[0].id);
+      this.loadBucket(request.data.buckets[0].id);
     })
     .catch(this.errorHandler);
   }
@@ -239,8 +239,8 @@ export default class App extends Component {
     .then(request => {
       let {state} = this;
       state.currentBucket = request.data.bucket;
-      state.editBucket.name = request.data.name;
-      state.editBucket.description = request.data.description;
+      state.editBucket.name = request.data.bucket.name;
+      state.editBucket.description = request.data.bucket.description;
       this.setState(state);
     })
     .catch(this.errorHandler);
