@@ -143,6 +143,9 @@ export default class App extends Component {
 
       if (error.response && error.response.status === 401){
         $('#add-item .negative .feedback-message').text('You are currently not logged in.')
+        window.localStorage.removeItem('auth');
+        state.redirectToLogin = true;
+        this.setState(state);
       }
 
       this.setState(state);
@@ -183,6 +186,8 @@ export default class App extends Component {
 
     if (error.response && error.response.status === 401){
       $("#dialog.error").text("You are not logged in.").fadeIn();
+      window.localStorage.removeItem('auth');
+      window.location = '/login';
     }
 
     if (error.request && error.request.status === 0){
