@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {expect} from 'chai';
-import {mount} from 'enzyme';
+import { expect } from 'chai';
+import { mount } from 'enzyme';
 import App from '../App';
 
 describe("App", () => {
@@ -29,7 +29,6 @@ describe("App", () => {
 
   it("Can add edit a bucket", () => {
     const app = mount(<App />);
-    console.log(app.state());
 
   });
 

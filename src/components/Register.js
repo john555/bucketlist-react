@@ -1,26 +1,27 @@
 import React, { Component } from 'react';
-import {Link} from 'react-router-dom';
-import xhr from './Request';
+import { Link } from 'react-router-dom';
+import { xhr } from '../Request';
 import '../css/anonymous.min.css';
 import logo from '../images/logo-colored.svg';
 import $ from 'jquery';
 
-class Register extends Component{
+export default class Register extends Component{
 
-    constructor(){
-        super();
+    constructor(props){
+        super(props);
         this.state = {
-            firstName: '',
-            lastName: '',
             username: '',
-            email: '',
-            password: '',
-            isLoading: false
+            password: '',            
+            lastName: '',
+            isLoading: false,
+            firstName: '',
+            email: ''
         }
 
         this.onSubmit = this.onSubmit.bind(this);
         this.onChange = this.onChange.bind(this);
-        this.tid = 0; // setTimeout() id
+        // setTimeout() id
+        this.tid = 0; 
     }
 
     onChange(e){
@@ -31,19 +32,18 @@ class Register extends Component{
     
     onSubmit(e){
         e.preventDefault();
-        let self = this;
-        let {state} = self;
+        let {state} = this;
         state.isLoading = true;
         this.setState(state);
         const {firstName, lastName, username, email, password} = this.state;
-        clearTimeout(self.tid);
+        clearTimeout(this.tid);
         
         const formData = {
-            email: email.trim(),
-            first_name: firstName.trim(),
-            last_name: lastName.trim(),
-            password: password.trim(),
-            username: username.trim()
+            "first_name": firstName.trim(),
+            "last_name": lastName.trim(),
+            "password": password.trim(),
+            "username": username.trim(),
+            email: email.trim()
         }
         xhr.post('/auth/register', formData)
         .then(()=> {
@@ -52,8 +52,13 @@ class Register extends Component{
             window.location = '/';
         })
         .catch(error => {
+
+            if (error.response && error.response.status === 500){
+                $("#dialog.error").text("Awe snap! Something went wrong on our end. We will fix it.").fadeIn();
+            }
+
             if (error.request.status === 0){
-                $("#dialog.error").text("You are offline. Connect to the internet and try again.").fadeIn();
+                $("#dialog.error").text("It seems you are offline. Connect to the internet and try again.").fadeIn();
             }
 
             if (error.response && error.response.status === 409){
@@ -71,7 +76,7 @@ class Register extends Component{
             state.isLoading = false;
             this.setState(state);
 
-            self.tid = setTimeout(() => {
+            this.tid = setTimeout(() => {
                 $("#dialog.error").fadeOut();
             }, 10000);
         });
@@ -124,5 +129,3 @@ class Register extends Component{
         );
     }
 }
-
-export default Register;

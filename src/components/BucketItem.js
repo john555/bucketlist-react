@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import '../css/bucket-item.min.css';
 import $ from 'jquery';
 
-class BucketItem extends Component{
+export default class BucketItem extends Component{
 
     constructor(){
         super();
@@ -31,7 +31,9 @@ class BucketItem extends Component{
 
     }
     
-    toggleContextMenu(proxy, event){
+    toggleContextMenu(e){
+        e.preventDefault();
+        
         let $item = $(this.refs.item);
         $item.toggleClass('menu-open');
     }
@@ -93,7 +95,7 @@ class BucketItem extends Component{
         e.preventDefault();
         const data = {
             title: this.refs.title.value.trim(),
-            due_date: this.refs.dueDate.value.trim(),
+            "due_date": this.refs.dueDate.value.trim(),
             description: this.refs.description.value.trim()
         }
 
@@ -180,5 +182,3 @@ class BucketItem extends Component{
         );
     }
 }
-
-export default BucketItem;

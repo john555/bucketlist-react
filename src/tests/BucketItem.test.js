@@ -1,15 +1,11 @@
 import React from 'react';
-import {mount} from 'enzyme';
-import {expect} from 'chai';
+import { mount } from 'enzyme';
+import { expect } from 'chai';
 
 import BucketItem from '../components/BucketItem';
 
 
 describe("Bucket item", () => {
-
-    beforeEach(() => {
-        
-    });
 
     it("Can correctly indicate status", () => {
         let root = mount(

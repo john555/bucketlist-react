@@ -1,30 +1,23 @@
 import React, { Component } from 'react';
-import {Redirect} from 'react-router-dom';
-import {Link} from 'react-router-dom';
-import axios from 'axios';
+import { Redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { xhr } from './Request';
 import BucketList from './components/BucketList.js';
 import BucketItem from './components/BucketItem.js';
-import Config from './App.Config';
 import logo from './images/logo.svg'
 import bucketIconLight from './images/bucket-light.svg';
 import $ from 'jquery';
 
-class App extends Component {
+export default class App extends Component {
   
   constructor(){
     super();
     this.bindEvents();
     this.auth = JSON.parse(localStorage.getItem('auth'));
     
-    this.xhr = axios.create({
-      baseURL: Config.API_BASE_URL
-    });
-    
+    this.xhr = xhr
     if (this.auth && this.auth.token){
-      this.xhr = axios.create({
-          headers: {'X-Token': this.auth.token},
-          baseURL: Config.API_BASE_URL
-      });
+      this.xhr.defaults.headers['X-Token'] = this.auth.token;
     }
   }
 
@@ -43,6 +36,13 @@ class App extends Component {
   componentWillMount(){
     
     this.state = {
+      resetPassword: {
+        oldPassword: '',
+        newPasswordRepeat: '',
+        newPassword: '',
+        isLoading: false,
+        formClass : ''
+      },
       redirectToLogin: false,
       newItem: {
         title: '',
@@ -64,14 +64,7 @@ class App extends Component {
         description: ''
       },
       currentBucket: {},
-      buckets: [],
-      resetPassword: {
-        oldPassword: '',
-        newPasswordRepeat: '',
-        newPassword: '',
-        isLoading: false,
-        formClass : ''
-      }
+      buckets: []
     };
 
   }
@@ -119,7 +112,7 @@ class App extends Component {
       return;
     }
 
-    let {state} = this;
+    let { state } = this;
     state.newItem.formClass = 'working';
     state.newItem.isLoading = true;
     this.setState(state);
@@ -127,7 +120,7 @@ class App extends Component {
 
     this.xhr.post(`/bucketlists/${this.state.currentBucket.id}/items`, {
       title: title.trim(),
-      due_date: dueDate.trim(),
+      "due_date": dueDate.trim(),
       description: description.trim()
     })
     .then(request => {
@@ -165,9 +158,7 @@ class App extends Component {
       state.currentBucket.items.splice(index, 1);
       this.setState(state);
     })
-    .catch(() => {
-      // handle error appropriately 
-    });
+    .catch(this.errorHandler);
   }
 
   onItemEdit(id, data){
@@ -182,11 +173,23 @@ class App extends Component {
       state.currentBucket.items[index] = newItem;
       this.setState(state);
     })
-    .catch(() => {
-      // handle error appropriately 
-    });
+    .catch(this.errorHandler);
   }
 
+  errorHandler(error){
+    if (error.response && error.response.status === 500){
+      $("#dialog.error").text("Awe snap! Something went wrong on our end. We will fix it.").fadeIn();
+    }
+
+    if (error.response && error.response.status === 401){
+      $("#dialog.error").text("You are not logged in.").fadeIn();
+    }
+
+    if (error.request.status === 0){
+      $("#dialog.error").text("It seems you are offline. Connect to the internet and try again.").fadeIn();
+    }
+  }
+  
   componentDidMount(){
     this.loadBuckets();
   }
@@ -205,9 +208,7 @@ class App extends Component {
       this.setState({buckets: request.data});
       this.loadBucket(request.data[0].id);
     })
-    .catch(() => {
-      
-    });
+    .catch(this.errorHandler);
   }
 
   onNewBucketChange(e){
@@ -237,9 +238,7 @@ class App extends Component {
       state.editBucket.description = request.data.description;
       this.setState(state);
     })
-    .catch(() => {
-      // handle error appropriately
-    });
+    .catch(this.errorHandler);
   }
 
   toggleItem(itemId){
@@ -251,16 +250,14 @@ class App extends Component {
     let index = items.findIndex(item => item.id === itemId);
     
     this.xhr.put(`/bucketlists/${this.state.currentBucket.id}/items/${itemId}`, {
-      is_complete: !items[index].is_complete
+      "is_complete": !items[index].is_complete
     })
     .then(() => {
-      items[index].is_complete = !items[index].is_complete;
+      items[index]["is_complete "] = !items[index].is_complete;
       state.currentBucket = currentBucket;
       this.setState(state);
     })
-    .catch(() => {
-      // handle error appropriately
-    });
+    .catch(this.errorHandler);
   }
 
   stopPropagation(e){
@@ -301,19 +298,14 @@ class App extends Component {
   }
 
   logout(){
-    let self = this;
-
     this.xhr.post('/auth/logout')
     .then(() => {
       localStorage.removeItem('auth');
       let {state} = this;
       state.redirectToLogin = true;
-      self.setState(state);
-      
+      this.setState(state); 
     })
-    .catch(() => {
-      // handle error ppropriately
-    });
+    .catch(this.errorHandler);
   }
 
   hideForms(e){
@@ -365,13 +357,12 @@ class App extends Component {
       // handle error appropriately
       state.editBucket.formClass = 'failed';
       state.editBucket.isLoading = false;
-      if (error.request.status === 0){
-        $('#edit-bucket .negative .feedback-message').text('You are offline.');
-      }
 
       if (error.response && error.response.status === 400){
         $('#edit-bucket .negative .feedback-message').text('A bucket with that name already exists.')
       }
+
+      this.errorHandler(error);
       this.setState(state);
     });
   }
@@ -386,10 +377,7 @@ class App extends Component {
     .then(result => {
       this.removeBucket(result.data.id);
     })
-    .catch(() => {
-      // handle error appropriately
-
-    });
+    .catch(this.errorHandler);
   }
 
   // removes bucket from state
@@ -495,9 +483,7 @@ class App extends Component {
       state.resetPassword.formClass = 'failed';
       state.resetPassword.isLoading = false;
 
-      if (error.request.status === 0){
-        $('#password-reset .negative .feedback-message').text('You are offline.');
-      }
+      this.errorHandler(error);
 
       if (error.response && error.response.status === 401){
         $('#password-reset .negative .feedback-message').text('Invalid old password.')
@@ -890,5 +876,3 @@ class App extends Component {
     );
   }
 }
-
-export default App;

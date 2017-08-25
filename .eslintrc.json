@@ -24,7 +24,7 @@
         ],
         "array-callback-return": "error",
         "array-element-newline": "off",
-        "arrow-body-style": "error",
+        "arrow-body-style": ["error", "always"],
         "arrow-parens": [
             "error",
             "as-needed"

@@ -1,6 +1,7 @@
 // Cookie helper functions thanks to w3schools.com
 // https://www.w3schools.com/js/js_cookies.asp
-class Cookie{
+
+export default class Cookie{
     static setCookie (cname, cvalue, hours){
         let d = new Date();
         d.setTime(d.getTime() + (hours * 60 * 60 * 1000));
@@ -26,4 +27,3 @@ class Cookie{
         return "";
     }
 }
-export default Cookie;

@@ -1,6 +1,6 @@
 import React from 'react';
-import {mount} from 'enzyme';
-import {expect} from 'chai';
+import { mount } from 'enzyme';
+import { expect } from 'chai';
 import BucketList from '../components/BucketList';
 
 describe("Bucket list component", () => {

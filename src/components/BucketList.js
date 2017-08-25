@@ -2,16 +2,7 @@ import React, { Component } from 'react';
 import '../css/bucket-list.min.css';
 import bucketIcon from '../images/bucket.svg';
 
-class BucketList extends Component{
-    // constructor(){
-    //     super();
-    //     // this.onItemClick = this.onItemClick.bind(this);
-    // }
-
-    componentDidMount(){
-        // 
-        //  console.log(this.props);
-    }
+export default class BucketList extends Component{
 
     render(){
 
@@ -57,5 +48,3 @@ class BucketList extends Component{
         );
     }
 }
-
-export default BucketList; 
