@@ -7,6 +7,10 @@
     box-sizing: border-box;
 }
 
+html{
+    background-color: #5c2e6b;
+}
+
 body{
     background: $backgroundColor !important;
     color: $defaultColor;
