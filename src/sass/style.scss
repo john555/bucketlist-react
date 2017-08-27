@@ -359,6 +359,8 @@ main{
     box-shadow: 0 0 30px rgba(0,0,0,.15);
     transform: translateY(1000px);
     transition: transform 200ms ease-in-out;
+    visibility: hidden;
+    pointer-events: none;
 }
 
 .overlay-header, .overlay-body{
@@ -418,6 +420,13 @@ span.o-title{
     display: none;
 }
 
+.add-item .overlay-content,
+.password-reset .overlay-content,
+.add-bucket .overlay-content,
+.edit-bucket .overlay-content{
+    visibility: visible;
+    pointer-events: all;
+}
 
 .password-reset #password-reset{
     transform: translate(0);
