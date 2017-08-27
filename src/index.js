@@ -1,8 +1,25 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import registerServiceWorker from './registerServiceWorker';
+import { BrowserRouter, Route } from 'react-router-dom';
+import './css/style.min.css';
+import './css/bootstrap.min.css';
+import Register from './components/Register.jsx';
+import Login from './components/Login.jsx';
+import App from './App.jsx'; 
 
-ReactDOM.render(<App />, document.getElementById('root'));
-registerServiceWorker();
+const root = document.getElementById('root');
+
+ReactDOM.render(
+    <div>
+        <BrowserRouter>
+            <div>
+                <Route exact path="/" component={Login} />
+                <Route exact path="/login" component={Login} />
+                <Route exact path="/u" component={App} />
+                <Route exact path="/register" component={Register} />
+            </div>
+        </BrowserRouter>
+    </div>, 
+    root
+);
+
