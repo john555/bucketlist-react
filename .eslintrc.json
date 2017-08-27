@@ -246,8 +246,7 @@
         ],
         "sort-imports": "off",
         "sort-keys": [
-            "error",
-            "desc"
+            "error"
         ],
         "sort-vars": "off",
         "space-before-blocks": "off",

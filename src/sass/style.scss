@@ -15,7 +15,7 @@ body{
     background: $backgroundColor !important;
     color: $defaultColor;
     font-family: "Segoe UI","Segoe WP",Tahoma,Arial,sans-serif;
-    // overflow: hidden;
+    overflow: hidden;
 }
 
 .left{
@@ -106,8 +106,17 @@ a#logo{
     height: $headerHeight;
 
     img{
-        display: block;
+        display: inline-block;
         height: 100%;
+        vertical-align: middle;
+    }
+
+    span.logo-text{
+        color: white;
+        display: inline-block;
+        vertical-align: middle;
+        font-size: 22px;
+        opacity: .8;
     }
 }
 
@@ -182,6 +191,7 @@ main{
 #bucket-list-wrapper{
     padding: 0px;
     height: 100%;
+    width: 100%;
     overflow-x: hidden;
     overflow-y: auto;
 }
@@ -189,7 +199,8 @@ main{
 #header-buckets{
     height: 45px;
     background: white;
-    padding: 0 20px;
+    padding: 0 0 0 20px;
+    border-bottom: 1px solid #eee;
 }
 
 #header-buckets .bucket-title{
@@ -199,11 +210,29 @@ main{
     text-rendering: optimizeLegibility;
     overflow: hidden;
     font-weight: 400;
-    font-size: 14px;
+    font-size: 11px;
     white-space: nowrap;
     text-overflow: ellipsis;
     text-transform: uppercase;
     color: #a2a3a3;
+}
+
+#action-add-bucket{
+    outline: none;
+    padding: 0 10px;
+    line-height: 45px;
+    background: transparent;
+    color: #5f6363;
+    border:0;
+
+    &:hover{
+        background: #f9f9f9;
+    }
+
+    span{
+        font-size: 11px;
+        margin-left: 8px;
+    }
 }
 
 .d-menu-item{
@@ -270,8 +299,9 @@ main{
 
 .pagelet-title{
     display: inline-block;
-    font-size: 19px;
+    font-size: 16px;
     line-height: 45px;
+    opacity: .85;
 }
 
 .pagelet-title-wrapper{
@@ -294,11 +324,19 @@ main{
             display: inline-block;
             text-decoration: none;
             color: inherit;
-            line-height: 45px;
-            padding: 0 12px;
-
+            line-height: 15px;
+            height: 45px;
+            padding: 7px 12px 0 12px;
+            text-align: center;
+            
             &:hover{
                 background: lighten($primaryColorDark, 5%);
+            }
+
+            span.icon-label{
+                font-size: 10px;
+                display: block;
+                opacity: .7;
             }
         }
     }
@@ -310,10 +348,11 @@ main{
 }
 
 .no-items{
-    background: white;
     padding: 20px;
     font-size: 18px;
     color: #a5a6a4;
+    background: white;
+    width: 300px;
 }
 
 #overlay{
@@ -541,7 +580,6 @@ body.add-item #overlay-inner{
     text-align: center;
     text-decoration: none;
     padding: 20px;
-    border: 1px dashed #eee;
 
     &:hover{
         color: inherit;

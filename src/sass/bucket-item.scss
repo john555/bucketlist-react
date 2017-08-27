@@ -1,11 +1,16 @@
 #bucket-items{
-    width: 630px;
+    // width: 630px;
 }
+
 #bucket-items .bucket-item{
     background: white;
     padding: 16px;
     border-left: 3px solid #ce6187;;
     box-shadow: 1px 1px 20px rgba(0,0,0,.1);
+    float: left;
+    margin-left: 20px;
+    min-width: 340px;
+    max-width: 560px;
 }
 
 #bucket-items .bucket-item.complete{
@@ -161,22 +166,18 @@
 }
 
 .js-item-title, .js-item-description, .js-item-date-wrapper input{
-    width: 92%;
-    border: 1px solid #e4e4e4;
+    width: 100%;
     border-radius: 2px;
-}
-
-.js-item-date-wrapper input{
+    border-width: 0;
+    background: #f4f4f4;
     padding: 3px 10px;
 }
 
 .js-item-title{
-    padding: 3px 10px;
     display: none;
 }
 
 .js-item-description{
-    padding: 10px;
     resize: none;
     height: 80px;
     margin-top: 10px;
@@ -193,6 +194,7 @@
 .js-item-date-wrapper label{
     display: block;
     margin-bottom: 8px;
+    font-weight: normal
 }
 
 .edit-mode .js-item-title, 

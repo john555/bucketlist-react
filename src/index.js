@@ -3,9 +3,9 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter, Route } from 'react-router-dom';
 import './css/style.min.css';
 import './css/bootstrap.min.css';
-import Register from './components/Register';
-import Login from './components/Login';
-import App from './App'; 
+import Register from './components/Register.jsx';
+import Login from './components/Login.jsx';
+import App from './App.jsx'; 
 
 const root = document.getElementById('root');
 

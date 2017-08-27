@@ -1,6 +1,7 @@
 # Bucketlist app (With ReactJS)
 
 ## How to use
+- Install gulp-cli `npm install -g gulp-cli`
 - Clone the app ( `git clone https://github.com/john555/bucketlist-react.git` )
 - Change the directory to the project folder ( `cd <FOLDER_NAME>` )
 - Install dependencies ( `npm install` )
