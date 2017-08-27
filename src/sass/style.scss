@@ -358,8 +358,8 @@ main{
     border: 1px solid #eee;
     box-shadow: 0 0 30px rgba(0,0,0,.15);
     transform: translateY(1000px);
-    transition: transform 200ms ease-in-out;
-    visibility: hidden;
+    transition: all 200ms ease-in-out;
+    opacity: 0;
     pointer-events: none;
 }
 
@@ -405,7 +405,8 @@ span.o-title{
 }
 
 .edit-bucket #add-bucket,
-.edit-bucket #add-item{
+.edit-bucket #add-item,
+.edit-bucket #password-reset{
     display: none;
 }
 
@@ -424,7 +425,7 @@ span.o-title{
 .password-reset .overlay-content,
 .add-bucket .overlay-content,
 .edit-bucket .overlay-content{
-    visibility: visible;
+    opacity: 1;
     pointer-events: all;
 }
 
@@ -433,12 +434,19 @@ span.o-title{
     display: block;
 }
 
+.password-reset #add-bucket,
+.password-reset #add-item,
+.password-reset #edit-bucket{
+    display: none; 
+}
+
 .password-reset #overlay::before,
 .edit-bucket #overlay::before,
 .add-bucket #overlay::before,
 .add-item #overlay::before{
     opacity: 1;
 }
+
 body.add-bucket, 
 body.add-item, 
 body.edit-bucket
