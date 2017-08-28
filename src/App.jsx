@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
-import { Link } from 'react-router-dom';
 import { xhr } from './Request';
 import BucketList from './components/BucketList.jsx';
 import BucketItem from './components/BucketItem.jsx';
-import logo from './images/logo.svg'
 import bucketIconLight from './images/bucket-light.svg';
+import BucketListHeader from './components/BucketlistHeader.jsx';
+import NewBucketForm from './components/forms/NewBucketForm.jsx';
+import EditBucketForm from './components/forms/EditBucketForm.jsx';
+import NewItemForm from './components/forms/NewItemForm.jsx';
+import ResetPasswordForm from './components/forms/ResetPasswordForm.jsx';
 import $ from 'jquery';
 
 export default class App extends Component {
@@ -41,7 +44,8 @@ export default class App extends Component {
         newPasswordRepeat: '',
         newPassword: '',
         isLoading: false,
-        formClass : ''
+        formClass : '',
+        automaticClose: true
       },
       redirectToLogin: false,
       newItem: {
@@ -49,19 +53,22 @@ export default class App extends Component {
         isLoading: false,
         formClass : '',
         dueDate: '',
-        description: ''
+        description: '',
+        automaticClose: true
       },
       newBucket:{
         name: '',
         isLoading: false,
         formClass : '',
-        description: ''
+        description: '',
+        automaticClose: true
       },
       editBucket:{
         name: '',
         isLoading: false,
         formClass : '',
-        description: ''
+        description: '',
+        automaticClose: true
       },
       currentBucket: {},
       buckets: []
@@ -89,9 +96,15 @@ export default class App extends Component {
       state.newBucket.formClass = 'succeeded';
       state.newBucket.isLoading = false;
       
+      if (this.state.newBucket.automaticClose){
+        this.hideForms(false);
+        this.loadBucket(bucket.id);
+      }
+      
       if (state.buckets.length === 1){
         this.loadBucket(bucket.id);
       }
+
       this.setState(state);
     })
     .catch(error => {
@@ -134,6 +147,9 @@ export default class App extends Component {
       state.newItem.description = '';
       state.newItem.formClass = 'succeeded';
       state.newItem.isLoading = false;
+      if (this.state.newItem.automaticClose){
+        this.hideForms(false);
+      }
       this.setState(state);
     })
     .catch(error => {
@@ -156,7 +172,6 @@ export default class App extends Component {
   }
 
   onItemDelete(id){
-    
     this.xhr.delete(`/bucketlists/${this.state.currentBucket.id}/items/${id}`)
     .then(() => {
       let {state} = this;
@@ -182,15 +197,18 @@ export default class App extends Component {
     .catch(this.errorHandler);
   }
 
-  errorHandler(error){
+  errorHandler(error, logout = true){
     if (error.response && error.response.status === 500){
       $("#dialog.error").text("Awe snap! Something went wrong on our end. We will fix it.").fadeIn();
     }
 
     if (error.response && error.response.status === 401){
-      $("#dialog.error").text("You are not logged in.").fadeIn();
-      window.localStorage.removeItem('auth');
-      window.location = '/login';
+      if (logout){
+        $("#dialog.error").text("You are not logged in.").fadeIn();
+        window.localStorage.removeItem('auth');
+        window.location = '/login';
+      }
+      
     }
 
     if (error.request && error.request.status === 0){
@@ -221,19 +239,34 @@ export default class App extends Component {
 
   onNewBucketChange(event){
     let {state} = this;
-    state.newBucket[event.target.name] = event.target.value;
+    let {target} = event;
+    if (target.type === "checkbox"){
+      state.newBucket[target.name] = target.checked;
+    } else {
+      state.newBucket[target.name] = target.value;
+    }
     this.setState(state);
   }
 
   onEditBucketChange(event){
     let {state} = this;
-    state.editBucket[event.target.name] = event.target.value;
+    let {target} = event;
+    if (target.type === "checkbox"){
+      state.editBucket[target.name] = target.checked;
+    } else {
+      state.editBucket[target.name] = target.value;
+    }
     this.setState(state);
   }
 
   onNewItemChange(event){
     let {state} = this;
-    state.newItem[event.target.name] = event.target.value;
+    let {target} = event;
+    if (target.type === "checkbox"){
+      state.newItem[target.name] = target.checked;
+    } else {
+      state.newItem[target.name] = target.value;
+    }
     this.setState(state);
   }
 
@@ -361,6 +394,10 @@ export default class App extends Component {
       state.buckets[index].name = request.data.name;
       state.buckets[index].description = request.data.description;
 
+      if (this.state.editBucket.automaticClose){
+        this.hideForms(false);
+      }
+
       this.setState(state);
     })
     .catch(error => {
@@ -407,7 +444,13 @@ export default class App extends Component {
 
   onPasswordResetChange(event){
     let {state} = this;
-    state.resetPassword[event.target.name] = event.target.value;
+    let {target} = event;
+    if (target.type === "checkbox"){
+      state.resetPassword[target.name] = target.checked;
+    } else {
+      state.resetPassword[target.name] = target.value;
+    }
+    
     this.setState(state);
   }
 
@@ -480,20 +523,26 @@ export default class App extends Component {
       return;
     }
 
-    self.xhr.post('/auth/reset-password', {
+    this.xhr.post('/auth/reset-password', {
       new_password: newPassword,
       old_password: oldPassword
     })
     .then(response => {
       state.resetPassword.formClass = 'succeeded';
       state.resetPassword.isLoading = false;
-      self.setState(state);
+      state.resetPassword.oldPassword = '';
+      state.resetPassword.newPassword = '';
+      state.resetPassword.newPasswordRepeat = '';
+      if (this.state.resetPassword.automaticClose){
+        this.hideForms(false);
+      }
+      this.setState(state);
     })
     .catch(error => {
       state.resetPassword.formClass = 'failed';
       state.resetPassword.isLoading = false;
 
-      this.errorHandler(error);
+      this.errorHandler(error, false);
 
       if (error.response && error.response.status === 401){
         $('#password-reset .negative .feedback-message').text('Invalid old password.')
@@ -517,47 +566,10 @@ export default class App extends Component {
     return (
       <div id="web-container">
         <div id="top-bar">
-          <div className="header-container">
-            <div className="left">
-              <Link to="/u" id="logo">
-                <img src={logo} alt="Logo"/> <span className="logo-text">Bucketlist</span>
-              </Link>
-            </div>
-            <div className="left">
-              <div className="left pagelet-title-wrapper ellipsable">
-                <span className={"pagelet-title ellipsable " + ((this.state.currentBucket.id) ? '':'hidden')}>{this.state.currentBucket.name} – {this.state.currentBucket.description}</span>
-              </div>
-            </div>
-            <div className="right">
-              <header id="content-header">
-                  
-                  <div className={"right " + ((this.state.currentBucket.id) ? '':'hidden')}>
-                    <ul id="context-actions">
-                      <li>
-                        <a href="" title="Add a goal" onClick={this.toggleItemForm.bind(this)}>
-                          <i className="glyphicon glyphicon-plus"></i>
-                          <span className="icon-label">Add a goal</span>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="" title="Edit bucket" onClick={this.toggleEditBucketForm.bind(this)}>
-                          <i className="glyphicon glyphicon-pencil"></i>
-                          <span className="icon-label">Edit bucket</span>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="" title="Delete bucket" onClick={this.onBucketDeleteClick.bind(this)}>
-                          <i className="glyphicon glyphicon-trash"></i>
-                          <span className="icon-label">Delete bucket</span>
-                        </a>
-                      </li>
-                    </ul>
-                    <div className="clearfix"></div>
-                  </div>
-              </header>
-            </div>
-            <div className="clearfix"></div>
-          </div>
+          <BucketListHeader currentBucket = {this.state.currentBucket}
+                            toggleItemForm = {this.toggleItemForm.bind(this)}
+                            toggleEditBucketForm = {this.toggleEditBucketForm.bind(this)}
+                            onBucketDeleteClick = {this.onBucketDeleteClick.bind(this)} />
         </div>
         <div id="portal-main">
             <div id="sidebar" className="expanded">
@@ -572,15 +584,6 @@ export default class App extends Component {
                     </div>
                     <div className="clearfix"></div>
                   </div>
-                  {/* <a onClick={this.toggleBucketForm} className="d-menu-item">
-                    <div className="menu-icon">
-                      <i className="glyphicon glyphicon-plus"></i>
-                    </div>
-                    <div id="user-details" className="menu-text">
-                      <span className="ellipsable">Create a new bucket</span>
-                    </div>
-                    <div className="clearfix"></div>
-                  </a> */}
                   <a className="d-menu-item current">
                     <div className="menu-icon">
                       <img src={bucketIconLight} alt="Bucket icon"/>
@@ -658,235 +661,49 @@ export default class App extends Component {
         <div id="overlay" onClick={this.hideForms}>
           <div id="overlay-inner">
             <div id="add-bucket" className="overlay-content" onClick={this.stopPropagation}>
-              <form onSubmit={this.onNewBucketFormSubmit} 
-                className={this.state.newBucket.formClass}>
-                <div className="overlay-header">
-                  <span className="o-title">Create a new bucket</span>
-                </div>
-                <div className="overlay-body">
-                  <div className="form-group">
-                    <input name="name" 
-                    onChange={this.onNewBucketChange} 
-                    value={this.state.newBucket.name} 
-                    type="text" 
-                    className="form-control" 
-                    placeholder="Name"
-                    required />
-                  </div>
-                  <div className="form-group">
-                    <textarea name="description" 
-                    onChange={this.onNewBucketChange} 
-                    value={this.state.newBucket.description} 
-                    placeholder="Description" 
-                    rows="4" 
-                    className="form-control"
-                    required></textarea>
-                  </div>
-                  <div className="form-group buttons">
-                    <div className="right">
-                      <div className="form-feedback positive">
-                        <span className="feedback-icon">
-                          <i className="glyphicon glyphicon-ok"></i>
-                        </span>
-                        <span className="feedback-message">
-                          Created a new bucket.
-                        </span>
-                      </div>
-                      <div className="form-feedback negative">
-                        <span className="feedback-icon">
-                          <i className="glyphicon glyphicon-remove"></i>
-                        </span>
-                        <span className="feedback-message"></span>
-                      </div>
-                      <div className="form-feedback processing">
-                        <span className="feedback-icon loading"></span>
-                        <span className="feedback-message">Processing...</span>
-                      </div>
-                      <button className="btn btn-primary" disabled={this.state.newBucket.isLoading}>Create</button>
-                      <button onClick={this.toggleBucketForm} className="btn btn-default">Close</button>
-                    </div>
-                    <div className="clearfix"></div>
-                  </div>
-                </div>
-              </form>
+              <NewBucketForm onSubmit={this.onNewBucketFormSubmit}
+                             onChange={this.onNewBucketChange}
+                             name={this.state.newBucket.name}
+                             description={this.state.newBucket.description}
+                             formClass={this.state.newBucket.formClass}
+                             isDisabled={this.state.newBucket.isLoading}
+                             close={this.toggleBucketForm}
+                             automaticClose={this.state.newBucket.automaticClose} />
             </div>
             <div id="edit-bucket" className="overlay-content" onClick={this.stopPropagation}>
-              <form onSubmit={this.onEditBucketFormSubmit.bind(this)} 
-                className={this.state.editBucket.formClass}>
-                <div className="overlay-header">
-                  <span className="o-title">Editing – {this.state.currentBucket.name}</span>
-                </div>
-                <div className="overlay-body">
-                  <div className="form-group">
-                    <input name="name" 
-                    onChange={this.onEditBucketChange.bind(this)}
-                    value={this.state.editBucket.name}
-                    type="text" 
-                    className="form-control" 
-                    placeholder="Name"
-                    required />
-                  </div>
-                  <div className="form-group">
-                    <textarea name="description" 
-                    onChange={this.onEditBucketChange.bind(this)}
-                    value={this.state.editBucket.description} 
-                    placeholder="Description" 
-                    rows="4" 
-                    className="form-control"
-                    required></textarea>
-                  </div>
-                  <div className="form-group buttons">
-                    <div className="right">
-                      <div className="form-feedback positive">
-                        <span className="feedback-icon">
-                          <i className="glyphicon glyphicon-ok"></i>
-                        </span>
-                        <span className="feedback-message">
-                          Bucket was updated.
-                        </span>
-                      </div>
-                      <div className="form-feedback negative">
-                        <span className="feedback-icon">
-                          <i className="glyphicon glyphicon-remove"></i>
-                        </span>
-                        <span className="feedback-message"></span>
-                      </div>
-                      <div className="form-feedback processing">
-                        <span className="feedback-icon loading"></span>
-                        <span className="feedback-message">Processing...</span>
-                      </div>
-                      <button className="btn btn-primary" disabled={this.state.editBucket.isLoading}>{(this.state.editBucket.isLoading? 'Wait': 'Save')}</button>
-                      <button onClick={this.toggleEditBucketForm.bind(this)} className="btn btn-default">Close</button>
-                    </div>
-                    <div className="clearfix"></div>
-                  </div>
-                </div>
-              </form>
+              <EditBucketForm onSubmit={this.onEditBucketFormSubmit.bind(this)}
+                              onChange={this.onEditBucketChange.bind(this)}
+                              name={this.state.editBucket.name}
+                              description={this.state.editBucket.description}
+                              formClass={this.state.editBucket.formClass}
+                              isDisabled={this.state.editBucket.isLoading}
+                              close={this.toggleEditBucketForm.bind(this)}
+                              bucketName={this.state.currentBucket.name}
+                             automaticClose={this.state.editBucket.automaticClose} />
             </div>
             <div id="add-item" className="overlay-content" onClick={this.stopPropagation}>
-              <form onSubmit={this.onNewItemFormSubmit} 
-                className={this.state.newItem.formClass}>
-                <div className="overlay-header">
-                  <span className="o-title">Create a new goal in - {this.state.currentBucket.name}</span>
-                </div>
-                <div className="overlay-body">
-                  <div className="form-group">
-                    <input onChange={this.onNewItemChange} 
-                      value={this.state.newItem.title}
-                      name="title" 
-                      type="text" 
-                      className="form-control" 
-                      placeholder="Title"
-                      required />
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="">Target date</label>
-                    <input onChange={this.onNewItemChange} 
-                      value={this.state.newItem.dueDate}
-                      name="dueDate" 
-                      type="date" 
-                      className="form-control" 
-                      placeholder="Title"
-                      required />
-                  </div>
-                  <div className="form-group">
-                    <textarea onChange={this.onNewItemChange} 
-                      value={this.state.newItem.description}
-                      name="description" 
-                      placeholder="Description" 
-                      rows="4" type="text" 
-                      className="form-control"
-                      required ></textarea>
-                  </div>
-                  <div className="form-group buttons">
-                    <div className="right">
-                      <div className="form-feedback positive">
-                        <span className="feedback-icon">
-                          <i className="glyphicon glyphicon-ok"></i>
-                        </span>
-                        <span className="feedback-message">
-                          Added a goal to ({this.state.currentBucket.name}).
-                        </span>
-                      </div>
-                      <div className="form-feedback negative">
-                        <span className="feedback-icon">
-                          <i className="glyphicon glyphicon-remove"></i>
-                        </span>
-                        <span className="feedback-message"></span>
-                      </div>
-                      <div className="form-feedback processing">
-                        <span className="feedback-icon loading"></span>
-                        <span className="feedback-message">Processing...</span>
-                      </div>
-                      <button className="btn btn-primary" disabled={this.state.newItem.isLoading}>Add</button>
-                      <button onClick={this.toggleItemForm.bind(this)} className="btn btn-default">Close</button>
-                    </div>
-                    <div className="clearfix"></div>
-                  </div>
-                </div>
-              </form>
+              <NewItemForm onSubmit={this.onNewItemFormSubmit}
+                           onChange={this.onNewItemChange}
+                           title={this.state.newItem.title}
+                           description={this.state.newItem.description}
+                           dueDate={this.state.newItem.dueDate}
+                           formClass={this.state.newItem.formClass}
+                           isDisabled={this.state.newItem.isLoading}
+                           close={this.toggleItemForm.bind(this)}
+                           bucketName={this.state.currentBucket.name}
+                           automaticClose={this.state.newItem.automaticClose} />
             </div>
             <div id="password-reset" className="overlay-content" onClick={this.stopPropagation}>
-              <form onSubmit={this.resetPassword.bind(this)} 
-                className={this.state.resetPassword.formClass}>
-                <div className="overlay-header">
-                  <span className="o-title">Reset password</span>
-                </div>
-                <div className="overlay-body">
-                  <div className="form-group">
-                    <input onChange={this.onPasswordResetChange.bind(this)} 
-                      value={this.state.resetPassword.oldPasword}
-                      name="oldPassword" 
-                      type="password" 
-                      className="form-control" 
-                      placeholder="Old password"
-                      required />
-                  </div>
-                  <div className="form-group">
-                    <input onChange={this.onPasswordResetChange.bind(this)} 
-                      value={this.state.resetPassword.newPasword}
-                      name="newPassword" 
-                      type="password" 
-                      className="form-control" 
-                      placeholder="New password"
-                      required />
-                  </div>
-                  <div className="form-group">
-                    <input onChange={this.onPasswordResetChange.bind(this)} 
-                      value={this.state.resetPassword.newPaswordRepeat}
-                      name="newPasswordRepeat" 
-                      type="password" 
-                      className="form-control" 
-                      placeholder="Repeat new password"
-                      required />
-                  </div>
-                  <div className="form-group buttons">
-                    <div className="right">
-                      <div className="form-feedback positive">
-                        <span className="feedback-icon">
-                          <i className="glyphicon glyphicon-ok"></i>
-                        </span>
-                        <span className="feedback-message">
-                          Password was reset.
-                        </span>
-                      </div>
-                      <div className="form-feedback negative">
-                        <span className="feedback-icon">
-                          <i className="glyphicon glyphicon-remove"></i>
-                        </span>
-                        <span className="feedback-message"></span>
-                      </div>
-                      <div className="form-feedback processing">
-                        <span className="feedback-icon loading"></span>
-                        <span className="feedback-message">Processing...</span>
-                      </div>
-                      <button className="btn btn-primary" disabled={this.state.resetPassword.isLoading}>Reset password</button>
-                      <button onClick={this.togglePasswordResetForm.bind(this)} className="btn btn-default">Close</button>
-                    </div>
-                    <div className="clearfix"></div>
-                  </div>
-                </div>
-              </form>
+              <ResetPasswordForm onSubmit={this.resetPassword.bind(this)}
+                                 onChange={this.onPasswordResetChange.bind(this)}
+                                 oldPassword={this.state.resetPassword.oldPasword}
+                                 newPassword={this.state.resetPassword.newPasword}
+                                 newPasswordRepeat={this.state.resetPassword.newPaswordRepeat}
+                                 formClass={this.state.resetPassword.formClass}
+                                 isDisabled={this.state.resetPassword.isLoading}
+                                 close={this.togglePasswordResetForm.bind(this)}
+                                 automaticClose={this.state.resetPassword.automaticClose}
+                                  />
             </div>
           </div>
         </div>
