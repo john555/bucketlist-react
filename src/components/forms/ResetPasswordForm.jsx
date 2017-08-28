@@ -10,6 +10,7 @@ const ResetPasswordForm = props => {
       <div className="form-group">
         <input onChange={props.onChange} 
           value={props.oldPasword}
+          name="oldPassword"
           type="password" 
           className="form-control" 
           placeholder="Old password"
@@ -18,6 +19,7 @@ const ResetPasswordForm = props => {
       <div className="form-group">
         <input onChange={props.onChange} 
           value={props.newPassword}
+          name="newPassword"
           type="password" 
           className="form-control" 
           placeholder="New password"
