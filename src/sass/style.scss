@@ -586,3 +586,19 @@ body.add-item #overlay-inner{
         text-decoration: none;
     }
 }
+
+.form-group{
+    input[type=checkbox]{
+        width: 20px;
+        height: 20px;
+    }
+    label, input[type=checkbox]{
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    .label-text{
+        margin-left: 6px;
+        user-select: none;
+    }
+}

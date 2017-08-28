@@ -34,6 +34,12 @@ const ResetPasswordForm = props => {
           placeholder="Repeat new password"
           required />
       </div>
+      <div className="form-group">
+          <label>
+              <input onChange={props.onChange} name="automaticClose" type="checkbox" checked={props.automaticClose} />
+              <span className="label-text">Automatically close when finished.</span>
+          </label>
+      </div>
       <div className="form-group buttons">
         <div className="right">
           <div className="form-feedback positive">

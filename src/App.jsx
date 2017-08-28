@@ -44,7 +44,8 @@ export default class App extends Component {
         newPasswordRepeat: '',
         newPassword: '',
         isLoading: false,
-        formClass : ''
+        formClass : '',
+        automaticClose: true
       },
       redirectToLogin: false,
       newItem: {
@@ -52,19 +53,22 @@ export default class App extends Component {
         isLoading: false,
         formClass : '',
         dueDate: '',
-        description: ''
+        description: '',
+        automaticClose: true
       },
       newBucket:{
         name: '',
         isLoading: false,
         formClass : '',
-        description: ''
+        description: '',
+        automaticClose: true
       },
       editBucket:{
         name: '',
         isLoading: false,
         formClass : '',
-        description: ''
+        description: '',
+        automaticClose: true
       },
       currentBucket: {},
       buckets: []
@@ -92,9 +96,15 @@ export default class App extends Component {
       state.newBucket.formClass = 'succeeded';
       state.newBucket.isLoading = false;
       
+      if (this.state.newBucket.automaticClose){
+        this.hideForms(false);
+        this.loadBucket(bucket.id);
+      }
+      
       if (state.buckets.length === 1){
         this.loadBucket(bucket.id);
       }
+
       this.setState(state);
     })
     .catch(error => {
@@ -137,6 +147,9 @@ export default class App extends Component {
       state.newItem.description = '';
       state.newItem.formClass = 'succeeded';
       state.newItem.isLoading = false;
+      if (this.state.newItem.automaticClose){
+        this.hideForms(false);
+      }
       this.setState(state);
     })
     .catch(error => {
@@ -159,7 +172,6 @@ export default class App extends Component {
   }
 
   onItemDelete(id){
-    
     this.xhr.delete(`/bucketlists/${this.state.currentBucket.id}/items/${id}`)
     .then(() => {
       let {state} = this;
@@ -185,15 +197,18 @@ export default class App extends Component {
     .catch(this.errorHandler);
   }
 
-  errorHandler(error){
+  errorHandler(error, logout = true){
     if (error.response && error.response.status === 500){
       $("#dialog.error").text("Awe snap! Something went wrong on our end. We will fix it.").fadeIn();
     }
 
     if (error.response && error.response.status === 401){
-      $("#dialog.error").text("You are not logged in.").fadeIn();
-      window.localStorage.removeItem('auth');
-      window.location = '/login';
+      if (logout){
+        $("#dialog.error").text("You are not logged in.").fadeIn();
+        window.localStorage.removeItem('auth');
+        window.location = '/login';
+      }
+      
     }
 
     if (error.request && error.request.status === 0){
@@ -224,19 +239,34 @@ export default class App extends Component {
 
   onNewBucketChange(event){
     let {state} = this;
-    state.newBucket[event.target.name] = event.target.value;
+    let {target} = event;
+    if (target.type === "checkbox"){
+      state.newBucket[target.name] = target.checked;
+    } else {
+      state.newBucket[target.name] = target.value;
+    }
     this.setState(state);
   }
 
   onEditBucketChange(event){
     let {state} = this;
-    state.editBucket[event.target.name] = event.target.value;
+    let {target} = event;
+    if (target.type === "checkbox"){
+      state.editBucket[target.name] = target.checked;
+    } else {
+      state.editBucket[target.name] = target.value;
+    }
     this.setState(state);
   }
 
   onNewItemChange(event){
     let {state} = this;
-    state.newItem[event.target.name] = event.target.value;
+    let {target} = event;
+    if (target.type === "checkbox"){
+      state.newItem[target.name] = target.checked;
+    } else {
+      state.newItem[target.name] = target.value;
+    }
     this.setState(state);
   }
 
@@ -364,6 +394,10 @@ export default class App extends Component {
       state.buckets[index].name = request.data.name;
       state.buckets[index].description = request.data.description;
 
+      if (this.state.editBucket.automaticClose){
+        this.hideForms(false);
+      }
+
       this.setState(state);
     })
     .catch(error => {
@@ -410,7 +444,13 @@ export default class App extends Component {
 
   onPasswordResetChange(event){
     let {state} = this;
-    state.resetPassword[event.target.name] = event.target.value;
+    let {target} = event;
+    if (target.type === "checkbox"){
+      state.resetPassword[target.name] = target.checked;
+    } else {
+      state.resetPassword[target.name] = target.value;
+    }
+    
     this.setState(state);
   }
 
@@ -483,20 +523,26 @@ export default class App extends Component {
       return;
     }
 
-    self.xhr.post('/auth/reset-password', {
+    this.xhr.post('/auth/reset-password', {
       new_password: newPassword,
       old_password: oldPassword
     })
     .then(response => {
       state.resetPassword.formClass = 'succeeded';
       state.resetPassword.isLoading = false;
-      self.setState(state);
+      state.resetPassword.oldPassword = '';
+      state.resetPassword.newPassword = '';
+      state.resetPassword.newPasswordRepeat = '';
+      if (this.state.resetPassword.automaticClose){
+        this.hideForms(false);
+      }
+      this.setState(state);
     })
     .catch(error => {
       state.resetPassword.formClass = 'failed';
       state.resetPassword.isLoading = false;
 
-      this.errorHandler(error);
+      this.errorHandler(error, false);
 
       if (error.response && error.response.status === 401){
         $('#password-reset .negative .feedback-message').text('Invalid old password.')
@@ -621,7 +667,8 @@ export default class App extends Component {
                              description={this.state.newBucket.description}
                              formClass={this.state.newBucket.formClass}
                              isDisabled={this.state.newBucket.isLoading}
-                             close={this.toggleBucketForm} />
+                             close={this.toggleBucketForm}
+                             automaticClose={this.state.newBucket.automaticClose} />
             </div>
             <div id="edit-bucket" className="overlay-content" onClick={this.stopPropagation}>
               <EditBucketForm onSubmit={this.onEditBucketFormSubmit.bind(this)}
@@ -631,7 +678,8 @@ export default class App extends Component {
                               formClass={this.state.editBucket.formClass}
                               isDisabled={this.state.editBucket.isLoading}
                               close={this.toggleEditBucketForm.bind(this)}
-                              bucketName={this.state.currentBucket.name} />
+                              bucketName={this.state.currentBucket.name}
+                             automaticClose={this.state.editBucket.automaticClose} />
             </div>
             <div id="add-item" className="overlay-content" onClick={this.stopPropagation}>
               <NewItemForm onSubmit={this.onNewItemFormSubmit}
@@ -642,7 +690,8 @@ export default class App extends Component {
                            formClass={this.state.newItem.formClass}
                            isDisabled={this.state.newItem.isLoading}
                            close={this.toggleItemForm.bind(this)}
-                           bucketName={this.state.currentBucket.name} />
+                           bucketName={this.state.currentBucket.name}
+                           automaticClose={this.state.newItem.automaticClose} />
             </div>
             <div id="password-reset" className="overlay-content" onClick={this.stopPropagation}>
               <ResetPasswordForm onSubmit={this.resetPassword.bind(this)}
@@ -653,6 +702,7 @@ export default class App extends Component {
                                  formClass={this.state.resetPassword.formClass}
                                  isDisabled={this.state.resetPassword.isLoading}
                                  close={this.togglePasswordResetForm.bind(this)}
+                                 automaticClose={this.state.resetPassword.automaticClose}
                                   />
             </div>
           </div>
