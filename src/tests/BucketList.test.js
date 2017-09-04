@@ -1,16 +1,18 @@
 import React from 'react';
-import { mount } from 'enzyme';
+import { shallow } from 'enzyme';
 import { expect } from 'chai';
 import BucketList from '../components/BucketList';
+
+jest.dontMock('../components/BucketList');
 
 describe("Bucket list component", () => {
     
     it("Shows no content mesage if no buckets are present.", () => {
-        let root = mount(<BucketList />);
+        let root = shallow(<BucketList />);
 
         expect(root.find('div.no-buckets')).to.have.lengthOf(1);
 
-        root = mount(<BucketList buckets={[]} />);
+        root = shallow(<BucketList buckets={[]} />);
 
         expect(root.find('div.no-buckets')).to.have.lengthOf(1);
     });
@@ -29,7 +31,7 @@ describe("Bucket list component", () => {
             }
         ];
 
-        let root = mount(<BucketList buckets={buckets} />);
+        let root = shallow(<BucketList buckets={buckets} />);
 
         expect(root.find('.bucket')).to.have.lengthOf(buckets.length);
     });

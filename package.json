@@ -2,6 +2,9 @@
   "name": "bucketlist",
   "version": "0.1.0",
   "private": true,
+  "jest": {
+  
+  },
   "dependencies": {
     "axios": "^0.16.2",
     "history": "^1.17.0",
@@ -14,8 +17,9 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "sass": "gulp sass"
+    "test": "react-scripts test --coverage --env=jsdom",
+    "sass": "gulp sass",
+    "test-help": "react-scripts test --help"
   },
   "devDependencies": {
     "browser-sync": "^2.18.13",
@@ -29,7 +33,11 @@
     "gulp-plumber": "^1.1.0",
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^3.1.0",
+    "jest": "^20.0.4",
+    "mocha": "^3.5.0",
+    "mock-browser": "^0.92.14",
     "protractor": "^5.1.2",
+    "react-addons-test-utils": "^15.6.0",
     "react-dom": "^15.6.1",
     "react-test-renderer": "^15.6.1"
   }

@@ -1,8 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { expect } from 'chai';
-import { mount } from 'enzyme';
+import { shallow } from 'enzyme';
 import App from '../App';
+import LocalStorageMock from '../__mocks__/LocalstorageMock';
+import HistoryMock from '../__mocks__/HistoryMock';
+
+global.window = {};
+global.localStorage = new LocalStorageMock();
+window.history = new HistoryMock();
 
 describe("App", () => {
   let app = new App();
@@ -28,23 +34,23 @@ describe("App", () => {
   });
 
   it("Can add edit a bucket", () => {
-    const app = mount(<App />);
+    const app = shallow(<App />);
 
   });
 
-  it("Can delete a bucket", () => {
+  it.skip("Can delete a bucket", () => {
 
   });
   
-  it("Can add items to bucket", () => {
+  it.skip("Can add items to bucket", () => {
 
   });
 
-  it("Can delete items from bucket", () => {
+  it.skip("Can delete items from bucket", () => {
 
   });
 
-  it("Can edit bucket items", () => {
+  it.skip("Can edit bucket items", () => {
 
   });
 

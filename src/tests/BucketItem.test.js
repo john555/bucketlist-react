@@ -1,14 +1,12 @@
 import React from 'react';
-import { mount } from 'enzyme';
+import { shallow } from 'enzyme';
 import { expect } from 'chai';
-
 import BucketItem from '../components/BucketItem';
-
 
 describe("Bucket item", () => {
 
     it("Can correctly indicate status", () => {
-        let root = mount(
+        let root = shallow(
         <BucketItem key="1"
           title="Go to Nairobi"
           description="Looking forward to the Dojo"
@@ -18,7 +16,7 @@ describe("Bucket item", () => {
         );
         expect(root.find('.complete')).to.have.lengthOf(1);
 
-        let root2 = mount(
+        let root2 = shallow(
         <BucketItem key="1"
           title="Go to Nairobi"
           description="Looking forward to the Dojo"
@@ -39,11 +37,6 @@ describe("Bucket item", () => {
       bucketItem.props.dueDate = "Thu, 03 Aug 2017 00:00:00 GMT";
       expect(bucketItem.getDueDay()).to.equal('03');
       expect(bucketItem.getDueMonthAndYearString()).to.equal('August, 2017');
-      //bucketItem.id = 1;
-      
-      //bucketItem.description = "The simple UI framework by Facebook.";
-      //bucketItem.isComplete = false;
-      //bucketItem.title = "ReactJS";
     });
 
     it("Can display created date correctly", () => {
