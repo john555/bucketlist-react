@@ -5,6 +5,12 @@ import BucketItem from '../components/BucketItem';
 
 describe("Bucket item", () => {
 
+    const fnStubs = {
+      toggleItem: () => {},
+      onItemEdit: () => {},
+      onItemDelete: () => {}
+    }
+
     it("Can correctly indicate status", () => {
         let root = shallow(
         <BucketItem key="1"
@@ -12,7 +18,8 @@ describe("Bucket item", () => {
           description="Looking forward to the Dojo"
           dueDate="08/12/2017"
           isComplete={true}
-          createdAt="08/12/2017" />
+          createdAt="08/12/2017"
+          {...fnStubs} />
         );
         expect(root.find('.complete')).to.have.lengthOf(1);
 
@@ -22,7 +29,8 @@ describe("Bucket item", () => {
           description="Looking forward to the Dojo"
           dueDate="08/12/2017"
           isComplete={false}
-          createdAt="08/12/2017" />
+          createdAt="08/12/2017"
+          {...fnStubs} />
         );
 
         expect(root2.find('.complete')).to.have.lengthOf(0);

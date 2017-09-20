@@ -31,7 +31,7 @@ describe("Bucket list component", () => {
             }
         ];
 
-        let root = shallow(<BucketList buckets={buckets} />);
+        let root = shallow(<BucketList buckets={buckets} onItemClick={()=>{}} />);
 
         expect(root.find('.bucket')).to.have.lengthOf(buckets.length);
     });
