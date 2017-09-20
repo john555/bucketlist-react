@@ -32,30 +32,5 @@ describe("App", () => {
       }
     ];
   });
-
-  it("Can add a new bucket", () => {
-    expect(app.state.buckets).to.have.lengthOf(1);
-  });
-
-  it("Can add edit a bucket", () => {
-    const app = shallow(<App />);
-
-  });
-
-  it.skip("Can delete a bucket", () => {
-
-  });
   
-  it.skip("Can add items to bucket", () => {
-
-  });
-
-  it.skip("Can delete items from bucket", () => {
-
-  });
-
-  it.skip("Can edit bucket items", () => {
-
-  });
-
 });

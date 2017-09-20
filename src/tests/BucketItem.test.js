@@ -3,7 +3,7 @@ import { shallow } from 'enzyme';
 import { expect } from 'chai';
 import BucketItem from '../components/BucketItem';
 
-describe("Bucket item", () => {
+describe("Bucket item component", () => {
 
     const fnStubs = {
       toggleItem: () => {},
@@ -53,5 +53,11 @@ describe("Bucket item", () => {
       expect(bucketItem.getCreatedDate()).to.equal(null);
       bucketItem.props.createdAt = "Wed, 02 Aug 2017 12:24:42 GMT";
       expect(bucketItem.getCreatedDate()).to.equal('August 02, 2017');
+    });
+
+
+    it("Can format date correctly", () => {
+      let bucketItem = new BucketItem();
+      expect(bucketItem.formatDate("Wed, 02 Aug 2017 12:24:42 GMT")).to.equal("2017-08-02");
     });
 });

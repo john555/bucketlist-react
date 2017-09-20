@@ -5,7 +5,7 @@ import BucketList from '../components/BucketList';
 
 jest.dontMock('../components/BucketList');
 
-describe("Bucket list component", () => {
+describe("Bucketlist component", () => {
     
     it("Shows no content mesage if no buckets are present.", () => {
         let root = shallow(<BucketList />);

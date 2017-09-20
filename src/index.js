@@ -10,16 +10,14 @@ import App from './App.jsx';
 const root = document.getElementById('root');
 
 ReactDOM.render(
-    <div>
-        <BrowserRouter>
-            <div>
-                <Route exact path="/" component={Login} />
-                <Route exact path="/login" component={Login} />
-                <Route exact path="/u" component={App} />
-                <Route exact path="/register" component={Register} />
-            </div>
-        </BrowserRouter>
-    </div>, 
+    <BrowserRouter>
+        <div>
+            <Route exact path="/" component={Login} />
+            <Route exact path="/login" component={Login} />
+            <Route exact path="/u" component={App} />
+            <Route exact path="/register" component={Register} />
+        </div>
+    </BrowserRouter>, 
     root
 );
 

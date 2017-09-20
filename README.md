@@ -1,5 +1,5 @@
 # Bucketlist app (With ReactJS)
-THis app enables you to keep track of your goals. A bucketslist is a list of goals you wish to persue in the future, or just next week. Features include:
+This app enables you to keep track of your goals. A bucketslist is a list of goals you wish to persue in the future, or just next week. Features include:
 
 - Creating, editing and deleting bucketlists.
 - Adding goals to bucketlists.
