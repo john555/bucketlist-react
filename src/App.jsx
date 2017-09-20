@@ -8,6 +8,7 @@ import BucketListHeader from './components/BucketlistHeader.jsx';
 import NewBucketForm from './components/forms/NewBucketForm.jsx';
 import EditBucketForm from './components/forms/EditBucketForm.jsx';
 import NewItemForm from './components/forms/NewItemForm.jsx';
+import Search from './components/Search.jsx';
 import ResetPasswordForm from './components/forms/ResetPasswordForm.jsx';
 import $ from 'jquery';
 
@@ -34,11 +35,16 @@ export default class App extends Component {
     this.toggleItem = this.toggleItem.bind(this);
     this.onItemEdit = this.onItemEdit;
     this.onItemDelete = this.onItemDelete.bind(this);
+    this.toggleSearch = this.toggleSearch.bind(this);
+    this.onSearchChange = this.onSearchChange.bind(this);
+    
   }
 
   componentWillMount(){
     
     this.state = {
+      showSearch: false,
+      search: '',
       resetPassword: {
         oldPassword: '',
         newPasswordRepeat: '',
@@ -552,6 +558,29 @@ export default class App extends Component {
     });
   }
 
+  onSearchChange(event){
+    let {state} = this;
+    state.search = event.target.value;
+    this.setState(state);
+  }
+
+  toggleSearch(event){
+    event.preventDefault();
+    
+    this.setState(prevState => {
+      return {
+        showSearch: !prevState.showSearch
+      }
+    });
+  }
+
+  onSearchKeyDown(event){
+    if (event.keyCode === 13){
+      event.preventDefault();
+      // get search results 
+    }
+  }
+
   render() {
 
     if (!this.auth || !this.auth.token || this.state.redirectToLogin) {
@@ -590,6 +619,15 @@ export default class App extends Component {
                     </div>
                     <div id="user-details" className="menu-text">
                       <span className="ellipsable">Bucketlists</span>
+                    </div>
+                    <div className="clearfix"></div>
+                  </a>
+                  <a className="d-menu-item" onClick={this.toggleSearch}>
+                    <div className="menu-icon">
+                      <i className="glyphicon glyphicon-search"></i>
+                    </div>
+                    <div id="user-details" className="menu-text">
+                      <span className="ellipsable">Search</span>
                     </div>
                     <div className="clearfix"></div>
                   </a>
@@ -707,6 +745,11 @@ export default class App extends Component {
             </div>
           </div>
         </div>
+        {this.state.showSearch? 
+            <Search onChange={this.onSearchChange} 
+                  onKeyDown={this.onSearchKeyDown}
+                  search={this.state.search}
+                  onClose={this.toggleSearch}  /> : null}
     </div>
     );
   }

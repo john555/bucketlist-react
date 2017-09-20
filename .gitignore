@@ -16,4 +16,5 @@ npm-debug.log*
 package-lock.json
 coverage/
 src/css/
+css/
 TODO
