@@ -5,5 +5,5 @@ cache:
   directories:
   - node_modules
 script:
-  - npm test -- --coverage
+  - npm test
 after_script: "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
