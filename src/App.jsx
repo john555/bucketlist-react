@@ -44,7 +44,11 @@ export default class App extends Component {
     
     this.state = {
       showSearch: false,
+      showSearchResults: false,
+      isSearching: false,
       search: '',
+      prevSearchTerm: '',
+      searchResults: [],
       resetPassword: {
         oldPassword: '',
         newPasswordRepeat: '',
@@ -569,15 +573,40 @@ export default class App extends Component {
     
     this.setState(prevState => {
       return {
-        showSearch: !prevState.showSearch
+        showSearch: !prevState.showSearch,
+        searchResults: [],
+        search: '',
+        showSearchResults: false
       }
     });
   }
 
-  onSearchKeyDown(event){
+  onSearchKeyDown = (event) => {
     if (event.keyCode === 13){
       event.preventDefault();
+
+      if (!this.state.currentBucket.id || this.state.search.trim() === ''){
+        return;
+      }
+
+      let search = this.state.search;
+      let {state} = this;
+      state.isSearching = true;
+      state.showSearchResults = false;
+      state.prevSearchTerm = state.search;
+      state.search = '';
+      this.setState(state);
+
+      
+
       // get search results 
+      this.xhr.get(`/bucketlists/${this.state.currentBucket.id}?q=${search}`)
+      .then(({data}) => {
+        state.searchResults = data.bucketlist.items;
+        state.showSearchResults = true;
+        state.isSearching = false;
+        this.setState(state);
+      })
     }
   }
 
@@ -749,7 +778,12 @@ export default class App extends Component {
             <Search onChange={this.onSearchChange} 
                   onKeyDown={this.onSearchKeyDown}
                   search={this.state.search}
-                  onClose={this.toggleSearch}  /> : null}
+                  onClose={this.toggleSearch}
+                  bucketName={this.state.currentBucket.name}
+                  results={this.state.searchResults}
+                  showResults={this.state.showSearchResults}
+                  isSearching={this.state.isSearching}
+                  prevSearchTerm={this.state.prevSearchTerm} /> : null}
     </div>
     );
   }

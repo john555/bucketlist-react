@@ -5,7 +5,7 @@ import Search from '../components/Search';
 
 describe("Search component", () => {
     it("Should render", () => {
-        let root = shallow(<Search />);
+        let root = shallow(<Search results={[]} />);
         expect(root.find('.search-title span').text()).to.contain("Search")
     });
 });
