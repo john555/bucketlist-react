@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.org/john555/bucketlist-react.svg?branch=challenge4)](https://travis-ci.org/john555/bucketlist-react)
+
+[![Coverage Status](https://coveralls.io/repos/github/john555/bucketlist-react/badge.svg?branch=ft-search)](https://coveralls.io/github/john555/bucketlist-react?branch=ft-search)
+
 # Bucketlist app (With ReactJS)
 This app enables you to keep track of your goals. A bucketslist is a list of goals you wish to persue in the future, or just next week. Features include:
 
