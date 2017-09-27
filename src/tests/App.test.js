@@ -1,26 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
-import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import App from '../App';
 import LocalStorageMock from '../__mocks__/LocalstorageMock';
 import HistoryMock from '../__mocks__/HistoryMock';
+import renderer from 'react-test-renderer';
 
 global.window = {};
 global.localStorage = new LocalStorageMock();
-window.history = new HistoryMock();
+global.history = new HistoryMock();
 
 describe("App", () => {
   let app = new App();
-
-  it('renders without crashing', () => {
-    const div = document.createElement('div');
-    ReactDOM.render(
-      <BrowserRouter>
-      <App />
-    </BrowserRouter>, div);
-  });
 
   beforeEach(function(){
     app.state = {};
@@ -33,4 +25,12 @@ describe("App", () => {
     ];
   });
   
+  it("Snapshot test", () => {
+    const rendered = renderer.create(
+      <BrowserRouter>
+        <App />
+    </BrowserRouter>
+    );
+    expect(rendered.toJSON()).toMatchSnapshot();
+  });
 });

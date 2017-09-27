@@ -40,7 +40,7 @@ const Search = props => {
         if (props.isSearching){
             return <div className="spinner-wrapper">
                 <span className="spinner">
-                    <img src={loadingIcon} />
+                    <img src={loadingIcon} alt="loading" />
                 </span>
             </div>
         }
