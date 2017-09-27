@@ -20,7 +20,7 @@ This app enables you to keep track of your goals. A bucketslist is a list of goa
 
 3. Change the directory to the project folder
         
-        cd <FOLDER_NAME>
+        cd bucketlist-react
 
 4. Install dependencies 
 
