@@ -9,11 +9,41 @@ This app enables you to keep track of your goals. A bucketslist is a list of goa
 - Editing and deleting goals.
 - Creating user a account, login and logout.
 
-## How to use
-- Install gulp-cli `npm install -g gulp-cli`
-- Clone the app ( `git clone https://github.com/john555/bucketlist-react.git` )
-- Change the directory to the project folder ( `cd <FOLDER_NAME>` )
-- Install dependencies ( `npm install` )
-- Compile Sass  ( `gulp sass` )
-- Run app ( `npm run start` )
-- To build the app ( `npm run build` )
+## Installation
+1. Install gulp-cli 
+
+        npm install -g gulp-cli
+
+2. Clone the app
+    
+        git clone https://github.com/john555/bucketlist-react.git
+
+3. Change the directory to the project folder
+        
+        cd <FOLDER_NAME>
+
+4. Install dependencies 
+
+        npm install
+
+5. Compile Sass  
+
+        gulp sass
+
+6. Run app 
+
+        npm start
+
+7. To build the app 
+
+        npm run build
+
+**Checkout the live app on heroku**
+
+https://bucketlist-john555.herokuapp.com
+
+**API**
+
+https://bucketlistapp-api.herokuapp.com/
+
+The API is written in python using the flask framework.
