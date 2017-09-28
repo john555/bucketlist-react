@@ -54,6 +54,7 @@ export default class Login extends Component{
             state.isLoggedIn = true;
             this.setState(state);
             $("#dialog.error").hide();
+            console.log(response);
         })
         .catch(error => {
             state.isLoading = false;

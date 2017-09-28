@@ -120,7 +120,7 @@ export default class App extends Component {
     .catch(error => {
       state.newBucket.formClass = 'failed';
       state.newBucket.isLoading = false;
-      if (error.request.status === 0){
+      if (error.response.status === 0){
         $('#add-bucket .negative .feedback-message').text('You are offline.');
       }
 
@@ -165,8 +165,8 @@ export default class App extends Component {
     .catch(error => {
       state.newItem.formClass = 'failed';
       state.newItem.isLoading = false;
-
-      if (error.request.status === 0){
+      
+      if (error.response && error.response.status === 0){
         $('#add-item .negative .feedback-message').text('You are offline.');
       }
 
@@ -221,7 +221,7 @@ export default class App extends Component {
       
     }
 
-    if (error.request && error.request.status === 0){
+    if (error.response && error.response.status === 0){
       $("#dialog.error").text("It seems you are offline. Connect to the internet and try again.").fadeIn();
     }
   }

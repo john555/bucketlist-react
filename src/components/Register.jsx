@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { xhr } from '../Request';
 import '../css/anonymous.min.css';
 import logo from '../images/logo-colored.svg';
@@ -15,13 +15,15 @@ export default class Register extends Component{
             lastName: '',
             isLoading: false,
             firstName: '',
-            email: ''
+            email: '',
+            redirectToLogin: false
         }
 
         this.onSubmit = this.onSubmit.bind(this);
         this.onChange = this.onChange.bind(this);
         // setTimeout() id
         this.tid = 0; 
+        this.xhr = xhr;
     }
 
     onChange(e){
@@ -30,8 +32,8 @@ export default class Register extends Component{
         this.setState(state);
     }
     
-    onSubmit(e){
-        e.preventDefault();
+    onSubmit(event){
+        event.preventDefault();
         let {state} = this;
         state.isLoading = true;
         this.setState(state);
@@ -45,19 +47,20 @@ export default class Register extends Component{
             "username": username.trim(),
             email: email.trim()
         }
-        xhr.post('/auth/register', formData)
+        
+        this.xhr.post('/auth/register', formData)
         .then(()=> {
+            
             state.isLoading = false;
+            state.redirectToLogin = true
             this.setState(state);
-            window.location = '/';
         })
         .catch(error => {
-
             if (error.response && error.response.status === 500){
                 $("#dialog.error").text("Awe snap! Something went wrong on our end. We will fix it.").fadeIn();
             }
 
-            if (error.request.status === 0){
+            if (error.response.status === 0){
                 $("#dialog.error").text("It seems you are offline. Connect to the internet and try again.").fadeIn();
             }
 
@@ -86,6 +89,9 @@ export default class Register extends Component{
         let buttonText = 'Register';
         if (this.state.isLoading){
             buttonText = 'Registering...';
+        }
+        if (this.state.redirectToLogin){
+            return <Redirect to="/" />
         }
         return (
             <div id="anonymouscontent" className="flex-center">

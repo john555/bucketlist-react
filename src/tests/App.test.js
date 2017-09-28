@@ -4,6 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { shallow } from 'enzyme';
 import App from '../App';
 import renderer from 'react-test-renderer';
+import MockAdapter from 'axios-mock-adapter';
 
 global.window = {};
 global.history = {};
@@ -21,9 +22,65 @@ global.localStorage = {
 
 describe("App", () => {
   let app = new App();
-  const wrapper = shallow(
-    <App />
-);
+  const wrapper = shallow(<App />);
+
+  const mock = new MockAdapter(wrapper.instance().xhr);
+ 
+  mock.onGet('/bucketlists')
+  .reply(200,{
+    "bucketlists": [
+      {
+        "created_at": "Wed, 20 Sep 2017 12:37:11 GMT", 
+        "description": "The best description ever", 
+        "id": 1, 
+        "name": "By awesome bucket"
+      }
+    ], 
+    "paging": {
+      "next": "/bucketlists?limit=12&page=1", 
+      "previous": ""
+    }
+  }
+  )
+
+  mock.onPost('/bucketlists')
+  .reply(201, {})
+
+  mock.onGet(/\/bucketlists\/[0-9]+/)
+  .reply(200, {
+    "bucketlist": {
+      "created_at": "Wed, 20 Sep 2017 12:37:11 GMT", 
+      "description": "The best description ever", 
+      "id": 18, 
+      "items": [
+        {
+          "created_at": "Wed, 20 Sep 2017 12:49:39 GMT", 
+          "description": "And check out some drunken monkeys.", 
+          "due_date": "Tue, 03 Oct 2017 00:00:00 GMT", 
+          "id": 1, 
+          "is_complete": false, 
+          "title": "Go to the zoo"
+        }, 
+        {
+          "created_at": "Wed, 20 Sep 2017 12:48:26 GMT", 
+          "description": "In ragged tight sweatpants.", 
+          "due_date": "Fri, 29 Sep 2017 00:00:00 GMT", 
+          "id": 2, 
+          "is_complete": false, 
+          "title": "Watch a 3D movie"
+        }
+      ], 
+      "name": "By awesome bucket"
+    }, 
+    "paging": {
+      "next": "/bucketlists/18?limit=12&page=1", 
+      "previous": ""
+    }
+  }
+  )
+
+  mock.onPost(/\/bucketlists\/[0-9]+\/items/)
+  .reply(201, {})
 
   beforeEach(function(){
     app.state = {};
@@ -35,6 +92,12 @@ describe("App", () => {
       }
     ];
   });
+
+  mock.onPost('/auth/reset-password')
+  .reply(200, {})
+
+  mock.onPost('/auth/logout')
+  .reply(200, {})
   
   it("Snapshot test", () => {
     const rendered = renderer.create(
