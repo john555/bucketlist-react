@@ -607,6 +607,9 @@ export default class App extends Component {
         state.isSearching = false;
         this.setState(state);
       })
+      .catch(error => {
+        
+      })
     }
   }
 

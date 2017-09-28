@@ -45,7 +45,25 @@ describe("App", () => {
     expect(rendered.toJSON()).toMatchSnapshot();
   });
 
-  describe("New bucket form", () => {
+  it("Can search", () => {
+    let { state } = wrapper.instance();
+    state.search = "kdk"
+    
+    state.currentBucket = {
+        id: '9390283'
+      }
+
+    wrapper.instance().setState(state);
+    
+    wrapper.instance().onSearchKeyDown({
+      keyCode: 13,
+      preventDefault: () => {}
+    })
+
+    expect(wrapper.instance().state.isSearching).toBe(true)
+  });
+
+  describe("New bucket", () => {
       
       it("Should disable submit button when form is submitted", () => {
           wrapper.find('NewBucketForm').simulate('submit', {
@@ -57,7 +75,7 @@ describe("App", () => {
       
   })
 
-  describe("New item form", () => {
+  describe("New item", () => {
     
     it("Should disable submit button when form is submitted", () => {
         wrapper.instance().setState({currentBucket: {
@@ -73,7 +91,7 @@ describe("App", () => {
     
   })
 
-  describe("Edit bucket form", () => {
+  describe("Edit bucket", () => {
     
     it("Should disable submit button when form is submitted", () => {
         wrapper.instance().setState({currentBucket: {
@@ -88,7 +106,7 @@ describe("App", () => {
     
   })
 
-  describe("Password reset form", () => {
+  describe("Password reset", () => {
     it("Should disable submit button when form is submitted", () => {
          wrapper.instance().setState({
           resetPassword: {
@@ -101,11 +119,44 @@ describe("App", () => {
         wrapper.find('ResetPasswordForm').simulate('submit', {
           preventDefault: () => {}
         })
-        
+
         expect(wrapper.find('ResetPasswordForm').props().isDisabled).toBe(true)
     })
+
+
+    it("Should fail when paswords do not match", () => {
+      wrapper.instance().setState({
+        resetPassword: {
+          oldPassword: '', 
+          newPassword: '12345678jsk', 
+          newPasswordRepeat: '1234567890'
+        }
+      })
+
+      wrapper.find('ResetPasswordForm').simulate('submit', {
+        preventDefault: () => {}
+      })
+
+      expect(wrapper.find('ResetPasswordForm').props().formClass).toBe('failed')
+    })
+
+    it("New password length should be < 8", () => {
+      wrapper.instance().setState({
+        resetPassword: {
+          oldPassword: '', 
+          newPassword: '1234567', 
+          newPasswordRepeat: '1234567'
+        }
+      })
+
+      wrapper.find('ResetPasswordForm').simulate('submit', {
+        preventDefault: () => {}
+      })
+
+      expect(wrapper.find('ResetPasswordForm').props().formClass).toBe('failed')
+    })
     
-  })
+  });
 
 
 });
