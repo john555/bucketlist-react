@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 import { shallow } from 'enzyme';
 import App from '../App';
 import renderer from 'react-test-renderer';
@@ -21,6 +21,9 @@ global.localStorage = {
 
 describe("App", () => {
   let app = new App();
+  const wrapper = shallow(
+    <App />
+);
 
   beforeEach(function(){
     app.state = {};
@@ -35,10 +38,74 @@ describe("App", () => {
   
   it("Snapshot test", () => {
     const rendered = renderer.create(
-      <BrowserRouter>
+      <MemoryRouter>
         <App />
-    </BrowserRouter>
+    </MemoryRouter>
     );
     expect(rendered.toJSON()).toMatchSnapshot();
   });
+
+  describe("New bucket form", () => {
+      
+      it("Should disable submit button when form is submitted", () => {
+          wrapper.find('NewBucketForm').simulate('submit', {
+            preventDefault: () => {}
+          })
+
+          expect(wrapper.find('NewBucketForm').props().isDisabled).toBe(true)
+      })
+      
+  })
+
+  describe("New item form", () => {
+    
+    it("Should disable submit button when form is submitted", () => {
+        wrapper.instance().setState({currentBucket: {
+          id: '927818'
+        }})
+
+        wrapper.find('NewItemForm').simulate('submit', {
+          preventDefault: () => {}
+        })
+
+        expect(wrapper.find('NewItemForm').props().isDisabled).toBe(true)
+    })
+    
+  })
+
+  describe("Edit bucket form", () => {
+    
+    it("Should disable submit button when form is submitted", () => {
+        wrapper.instance().setState({currentBucket: {
+          id: '927818'
+        }})
+        wrapper.find('EditBucketForm').simulate('submit', {
+          preventDefault: () => {}
+        })
+
+        expect(wrapper.find('EditBucketForm').props().isDisabled).toBe(true)
+    })
+    
+  })
+
+  describe("Password reset form", () => {
+    it("Should disable submit button when form is submitted", () => {
+         wrapper.instance().setState({
+          resetPassword: {
+            oldPassword: '', 
+            newPassword: '1234567890', 
+            newPasswordRepeat: '1234567890'
+          }
+        })
+
+        wrapper.find('ResetPasswordForm').simulate('submit', {
+          preventDefault: () => {}
+        })
+        
+        expect(wrapper.find('ResetPasswordForm').props().isDisabled).toBe(true)
+    })
+    
+  })
+
+
 });

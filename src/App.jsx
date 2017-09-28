@@ -514,7 +514,7 @@ export default class App extends Component {
     let {state} = self;
     state.resetPassword.formClass = 'working';
     state.resetPassword.isLoading = true;
-    self.setState(state);
+    this.setState(state);
     let {oldPassword, newPassword, newPasswordRepeat} = this.state.resetPassword;
 
     if (newPasswordRepeat !== newPassword){

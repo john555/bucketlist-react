@@ -390,6 +390,7 @@ exports[`App Snapshot test 1`] = `
       >
         <form
           className=""
+          id="new-bucket"
           onSubmit={[Function]}
         >
           <div
