@@ -126,6 +126,20 @@ describe("App", () => {
     expect(wrapper.instance().state.isSearching).toBe(true)
   });
 
+  it("Can remove bucket from state", () => {
+    wrapper.instance().setState({
+      buckets: [
+        {
+          id: 1
+        }
+      ]
+    })
+
+    wrapper.instance().removeBucket(1)
+
+    expect(wrapper.instance().state.buckets.length).toBe(0)
+  })
+
   describe("New bucket", () => {
       
       it("Should disable submit button when form is submitted", () => {
