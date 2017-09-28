@@ -16,7 +16,8 @@ global.localStorage = {
     },
     setItem: (key, value) => {
         store[key] = value
-    }
+    },
+    removeItem: key => Reflect.deleteProperty(store, key)
 }
 
 
@@ -123,9 +124,7 @@ describe("App", () => {
     
     state.currentBucket = {
         id: 1,
-        items: [
-          {id: 1}
-        ]
+        items: [{id: 1}]
       }
 
     wrapper.instance().setState(state);
@@ -138,7 +137,18 @@ describe("App", () => {
     expect(wrapper.instance().state.isSearching).toBe(true)
   });
 
+  it("Can toggle Search", () => {
+    wrapper.instance().toggleSearch({
+      preventDefault: () => {}
+    })
+
+    expect(wrapper.instance().state.showSearch).toBe(true)
+  })
+
   it("Can remove bucket from state", () => {
+    mock.onDelete(/bucketlists\/[0-9]+/)
+    .reply(200, {id: 1})
+
     wrapper.instance().setState({
       buckets: [
         {
@@ -147,9 +157,22 @@ describe("App", () => {
       ]
     })
 
-    wrapper.instance().removeBucket(1)
+    wrapper.instance().onBucketDeleteClick({
+      preventDefault: () => {}
+    })
+    .then(() => {
+      expect(wrapper.instance().state.buckets.length).toBe(0)
+    })
 
-    expect(wrapper.instance().state.buckets.length).toBe(0)
+    
+  })
+
+  it("Typing in search input field works", () => {
+    wrapper.instance().onSearchChange({
+      target: {value: "foosearch"}
+    })
+
+    expect(wrapper.instance().state.search).toBe("foosearch")
   })
 
   describe("New bucket", () => {
@@ -213,6 +236,23 @@ describe("App", () => {
         expect(wrapper.instance().state.currentBucket.items.length).toBe(numOfItems + 1)
       })
     })
+
+    it("Can toggle item status", () => {
+      wrapper.instance().setState({
+        currentBucket: {
+          id: 1,
+          items: [{
+            id: 1,
+            is_complete: false
+          }]
+        }
+      });
+
+      wrapper.instance().toggleItem(1)
+      .then(() => {
+        expect(wrapper.instance().state.currentBucket.items[0].is_complete).toBe(true)
+      })
+    })
   })
 
   describe("Edit bucket", () => {
@@ -247,6 +287,27 @@ describe("App", () => {
         expect(wrapper.find('ResetPasswordForm').props().isDisabled).toBe(true)
     })
 
+    it("onChange works for checkboxes", () => {
+      wrapper.instance().onPasswordResetChange({
+        target: {
+          name: "checkbox",
+          type: "checkbox",
+          checked: true
+        }
+      })
+      expect(wrapper.instance().state.resetPassword.checkbox).toBe(true)
+    })
+
+    it("onChange works for non-checkboxes", () => {
+      wrapper.instance().onPasswordResetChange({
+        target: {
+          name: "oldPassword",
+          type: "text",
+          value: "123"
+        }
+      })
+      expect(wrapper.instance().state.resetPassword.oldPassword).toBe("123")
+    })
 
     it("Should fail when paswords do not match", () => {
       wrapper.instance().setState({
@@ -282,5 +343,20 @@ describe("App", () => {
     
   });
 
+  it("stopPropagation works", () => {
+    const stopPropagation = jest.fn();
+    wrapper.instance().stopPropagation({
+      stopPropagation
+    })
+
+    expect(stopPropagation).toBeCalled()
+  })
+
+  it("Can logout", () => {
+    wrapper.instance().logout()
+   .then(() => {
+      expect(wrapper.instance().state.redirectToLogin).toBe(true)
+   })
+  })
 
 });

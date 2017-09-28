@@ -293,7 +293,7 @@ export default class App extends Component {
     
     let index = items.findIndex(item => item.id === itemId);
     
-    this.xhr.put(`/bucketlists/${this.state.currentBucket.id}/items/${itemId}`, {
+    return this.xhr.put(`/bucketlists/${this.state.currentBucket.id}/items/${itemId}`, {
       "is_complete": !items[index].is_complete
     })
     .then(() => {
@@ -301,7 +301,6 @@ export default class App extends Component {
       state.currentBucket = currentBucket;
       this.setState(state);
     })
-    .catch(this.errorHandler);
   }
 
   stopPropagation(event){
@@ -342,7 +341,7 @@ export default class App extends Component {
   }
 
   logout(){
-    this.xhr.post('/auth/logout')
+    return this.xhr.post('/auth/logout')
     .then(() => {
       localStorage.removeItem('auth');
       let {state} = this;
@@ -423,11 +422,10 @@ export default class App extends Component {
       return;
     }
 
-    this.xhr.delete(`/bucketlists/${this.state.currentBucket.id}`)
+    return this.xhr.delete(`/bucketlists/${this.state.currentBucket.id}`)
     .then(result => {
       this.removeBucket(result.data.id);
     })
-    .catch(this.errorHandler);
   }
 
   // removes bucket from state
@@ -526,7 +524,7 @@ export default class App extends Component {
       return;
     }
 
-    this.xhr.post('/auth/reset-password', {
+    return this.xhr.post('/auth/reset-password', {
       new_password: newPassword,
       old_password: oldPassword
     })
