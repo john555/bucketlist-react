@@ -80,7 +80,10 @@ describe("App", () => {
   )
 
   mock.onPost(/\/bucketlists\/[0-9]+\/items/)
-  .reply(201, {})
+  .reply(201, {
+    id: 1,
+    title: "foobar"
+  })
 
   beforeEach(function(){
     app.state = {};
@@ -92,6 +95,12 @@ describe("App", () => {
       }
     ];
   });
+
+  mock.onDelete(/\/bucketlists\/[0-9]+\/items\/[0-9]+/)
+  .reply(200, {id: 1})
+
+  mock.onPut(/\/bucketlists\/[0-9]+\/items\/[0-9]+/)
+  .reply(200, {id: 1, title: "bar"})
 
   mock.onPost('/auth/reset-password')
   .reply(200, {})
@@ -113,7 +122,10 @@ describe("App", () => {
     state.search = "kdk"
     
     state.currentBucket = {
-        id: '9390283'
+        id: 1,
+        items: [
+          {id: 1}
+        ]
       }
 
     wrapper.instance().setState(state);
@@ -156,7 +168,7 @@ describe("App", () => {
     
     it("Should disable submit button when form is submitted", () => {
         wrapper.instance().setState({currentBucket: {
-          id: '927818'
+          id: 1
         }})
 
         wrapper.find('NewItemForm').simulate('submit', {
@@ -166,6 +178,41 @@ describe("App", () => {
         expect(wrapper.find('NewItemForm').props().isDisabled).toBe(true)
     })
     
+    it("Can delete item", () => {
+      const instance = wrapper.instance()
+      instance.setState({currentBucket: {
+        id: 2,
+        items: [{id: 1}]
+      }})
+      
+      wrapper.instance().onItemDelete(1)
+      .then(() => {
+        expect(instance.state.currentBucket.items.length).toBe(0)
+      })
+    })
+
+    it("Can edit item", () => {
+      const instance = wrapper.instance()
+      instance.setState({currentBucket: {
+        id: 1,
+        items: [{id: 1, name: "foo"}]
+      }})
+      
+      wrapper.instance().onItemEdit(1, {title: ''})
+      .then(() => {
+        expect(instance.state.currentBucket.items[0].title).toBe('bar')
+      })
+    })
+
+    it("Can add new item", () => {
+      let numOfItems = wrapper.instance().state.currentBucket.items.length
+      wrapper.instance().onNewItemFormSubmit({
+        preventDefault: () => {}
+      })
+      .then(() => {
+        expect(wrapper.instance().state.currentBucket.items.length).toBe(numOfItems + 1)
+      })
+    })
   })
 
   describe("Edit bucket", () => {

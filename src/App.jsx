@@ -144,7 +144,7 @@ export default class App extends Component {
     this.setState(state);
     const {title, dueDate, description} = this.state.newItem;
 
-    this.xhr.post(`/bucketlists/${this.state.currentBucket.id}/items`, {
+    return this.xhr.post(`/bucketlists/${this.state.currentBucket.id}/items`, {
       title: title.trim(),
       "due_date": dueDate.trim(),
       description: description.trim()
@@ -170,19 +170,12 @@ export default class App extends Component {
         $('#add-item .negative .feedback-message').text('You are offline.');
       }
 
-      if (error.response && error.response.status === 401){
-        $('#add-item .negative .feedback-message').text('You are currently not logged in.')
-        window.localStorage.removeItem('auth');
-        state.redirectToLogin = true;
-        this.setState(state);
-      }
-
       this.setState(state);
     });
   }
 
   onItemDelete(id){
-    this.xhr.delete(`/bucketlists/${this.state.currentBucket.id}/items/${id}`)
+    return this.xhr.delete(`/bucketlists/${this.state.currentBucket.id}/items/${id}`)
     .then(() => {
       let {state} = this;
       let index = state.currentBucket.items.findIndex(item => item.id === id);
