@@ -385,7 +385,7 @@ export default class App extends Component {
     
     this.xhr.put('/bucketlists/' + this.state.currentBucket.id, {name: name.trim(), description: description.trim()})
     .then(request => {
-      state.currentBucket = request.data;
+      state.currentBucket = {...state.currentBucket, ...request.data.items};
       state.editBucket.name = request.data.name;
       state.editBucket.description = request.data.description;
       state.editBucket.formClass = 'succeeded';
