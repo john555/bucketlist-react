@@ -86,7 +86,7 @@ describe("App", () => {
     title: "foobar"
   })
 
-  beforeEach(function(){
+  beforeEach(() => {
     app.state = {};
     app.state.buckets = [
       {
