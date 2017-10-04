@@ -120,7 +120,7 @@ export default class App extends Component {
     .catch(error => {
       state.newBucket.formClass = 'failed';
       state.newBucket.isLoading = false;
-      if (error.request.status === 0){
+      if (error.response.status === 0){
         $('#add-bucket .negative .feedback-message').text('You are offline.');
       }
 
@@ -144,7 +144,7 @@ export default class App extends Component {
     this.setState(state);
     const {title, dueDate, description} = this.state.newItem;
 
-    this.xhr.post(`/bucketlists/${this.state.currentBucket.id}/items`, {
+    return this.xhr.post(`/bucketlists/${this.state.currentBucket.id}/items`, {
       title: title.trim(),
       "due_date": dueDate.trim(),
       description: description.trim()
@@ -165,16 +165,9 @@ export default class App extends Component {
     .catch(error => {
       state.newItem.formClass = 'failed';
       state.newItem.isLoading = false;
-
-      if (error.request.status === 0){
+      
+      if (error.response && error.response.status === 0){
         $('#add-item .negative .feedback-message').text('You are offline.');
-      }
-
-      if (error.response && error.response.status === 401){
-        $('#add-item .negative .feedback-message').text('You are currently not logged in.')
-        window.localStorage.removeItem('auth');
-        state.redirectToLogin = true;
-        this.setState(state);
       }
 
       this.setState(state);
@@ -182,7 +175,7 @@ export default class App extends Component {
   }
 
   onItemDelete(id){
-    this.xhr.delete(`/bucketlists/${this.state.currentBucket.id}/items/${id}`)
+    return this.xhr.delete(`/bucketlists/${this.state.currentBucket.id}/items/${id}`)
     .then(() => {
       let {state} = this;
       let index = state.currentBucket.items.findIndex(item => item.id === id);
@@ -221,7 +214,7 @@ export default class App extends Component {
       
     }
 
-    if (error.request && error.request.status === 0){
+    if (error.response && error.response.status === 0){
       $("#dialog.error").text("It seems you are offline. Connect to the internet and try again.").fadeIn();
     }
   }
@@ -300,7 +293,7 @@ export default class App extends Component {
     
     let index = items.findIndex(item => item.id === itemId);
     
-    this.xhr.put(`/bucketlists/${this.state.currentBucket.id}/items/${itemId}`, {
+    return this.xhr.put(`/bucketlists/${this.state.currentBucket.id}/items/${itemId}`, {
       "is_complete": !items[index].is_complete
     })
     .then(() => {
@@ -308,7 +301,6 @@ export default class App extends Component {
       state.currentBucket = currentBucket;
       this.setState(state);
     })
-    .catch(this.errorHandler);
   }
 
   stopPropagation(event){
@@ -349,7 +341,7 @@ export default class App extends Component {
   }
 
   logout(){
-    this.xhr.post('/auth/logout')
+    return this.xhr.post('/auth/logout')
     .then(() => {
       localStorage.removeItem('auth');
       let {state} = this;
@@ -393,7 +385,7 @@ export default class App extends Component {
     
     this.xhr.put('/bucketlists/' + this.state.currentBucket.id, {name: name.trim(), description: description.trim()})
     .then(request => {
-      state.currentBucket = request.data;
+      state.currentBucket = {...state.currentBucket, ...request.data.items};
       state.editBucket.name = request.data.name;
       state.editBucket.description = request.data.description;
       state.editBucket.formClass = 'succeeded';
@@ -430,11 +422,10 @@ export default class App extends Component {
       return;
     }
 
-    this.xhr.delete(`/bucketlists/${this.state.currentBucket.id}`)
+    return this.xhr.delete(`/bucketlists/${this.state.currentBucket.id}`)
     .then(result => {
       this.removeBucket(result.data.id);
     })
-    .catch(this.errorHandler);
   }
 
   // removes bucket from state
@@ -514,7 +505,7 @@ export default class App extends Component {
     let {state} = self;
     state.resetPassword.formClass = 'working';
     state.resetPassword.isLoading = true;
-    self.setState(state);
+    this.setState(state);
     let {oldPassword, newPassword, newPasswordRepeat} = this.state.resetPassword;
 
     if (newPasswordRepeat !== newPassword){
@@ -533,7 +524,7 @@ export default class App extends Component {
       return;
     }
 
-    this.xhr.post('/auth/reset-password', {
+    return this.xhr.post('/auth/reset-password', {
       new_password: newPassword,
       old_password: oldPassword
     })
@@ -606,6 +597,9 @@ export default class App extends Component {
         state.showSearchResults = true;
         state.isSearching = false;
         this.setState(state);
+      })
+      .catch(error => {
+        
       })
     }
   }

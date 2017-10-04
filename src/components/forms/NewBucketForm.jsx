@@ -2,7 +2,7 @@ import React from 'react';
 
 const NewBucketForm = props => {
     return (
-        <form onSubmit={props.onSubmit} 
+        <form onSubmit={props.onSubmit} id="new-bucket"
         className={props.formClass}>
             <div className="overlay-header">
                 <span className="o-title">Create a new bucket</span>

@@ -1,13 +1,13 @@
 [![Build Status](https://travis-ci.org/john555/bucketlist-react.svg?branch=develop)](https://travis-ci.org/john555/bucketlist-react)
-[![Coverage Status](https://coveralls.io/repos/github/john555/bucketlist-react/badge.svg?branch=ft-search)](https://coveralls.io/github/john555/bucketlist-react?branch=ft-search)
+[![Coverage Status](https://coveralls.io/repos/github/john555/bucketlist-react/badge.svg?branch=ch-fix-tests)](https://coveralls.io/github/john555/bucketlist-react?branch=ch-fix-tests)
 
 # Bucketlist app (With ReactJS)
-This app enables you to keep track of your goals. A bucketslist is a list of goals you wish to persue in the future, or just next week. Features include:
+This app enables you to keep track of your goals. A bucketlist is a list of goals you wish to persue in the future, or just next week. Features include:
 
 - Creating, editing and deleting bucketlists.
 - Adding goals to bucketlists.
 - Editing and deleting goals.
-- Creating user a account, login and logout.
+- Creating a user account, login and logout.
 
 ## Installation
 1. Install gulp-cli 
